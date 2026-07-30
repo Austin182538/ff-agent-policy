@@ -32,20 +32,53 @@ INT**. Lineup assumed: 1 QB, 2 RB, 2 WR, 1 TE, 1 FLEX (RB/WR/TE). No K/DST.
 
 ---
 
+## Setup (first time)
+
+The `venv/` and `venv_data/` folders are **not** committed to the repo -- they're
+large, machine-specific, and fully regenerable from the two requirements files
+below. To recreate the project from a fresh clone you need:
+
+**Prerequisites**
+- **Python 3.9** (for `venv`) and **Python 3.13** (for `venv_data`). Two envs
+  exist only because `nflreadpy` requires Python >= 3.10 while the app is on 3.9.
+- **Chrome or Edge** installed locally -- the graphics pipeline screenshots
+  HTML/CSS with a headless browser (`viz/render.py`); it is *not* a pip package.
+- The SQLite DB `nfl_analytics.db`. It is **git-ignored** (`*.db`), so a fresh
+  clone won't have it -- either copy the file over separately, or rebuild it from
+  source with the nflverse/odds ingest scripts (`venv_data\Scripts\python.exe
+  scripts\ingest_historical_data.py`, then the scrapers under "Refreshing data").
+
+**Build the two environments**
+
+```powershell
+# Main env: ranking model + graphics + scrapers/clients
+py -3.9 -m venv venv
+venv\Scripts\pip install -r requirements.txt
+
+# Data env: ONLY the nflverse historical pull (needs Python >= 3.10)
+py -3.13 -m venv venv_data
+venv_data\Scripts\pip install -r requirements-data.txt
+```
+
+(macOS/Linux: use `venv/bin/pip` and `venv_data/bin/pip`.)
+
+---
+
 ## Quick start
 
-Two virtualenvs are used: `venv` (model/DB) and `venv_data` (graphics/scrape deps).
+Everything except the nflverse data pull runs in `venv`. `venv_data` is used only
+for `scripts\ingest_historical_data.py`.
 
 ```powershell
 # 1. (Re)build the rankings from the DB  ->  outputs/player_rankings_2026.csv
 venv\Scripts\python.exe analysis\player_ranking_v1.py
 
 # 2. Make graphics (random theme/variant each run; pin with --theme/--variant/--seed)
-venv_data\Scripts\python.exe scripts\generate_ranking_graphic.py --type overall --top 12
-venv_data\Scripts\python.exe scripts\generate_ranking_graphic.py --type position --position RB --top 12
-venv_data\Scripts\python.exe scripts\generate_ranking_graphic.py --type favorites --top 10
-venv_data\Scripts\python.exe scripts\generate_ranking_graphic.py --type compare --players "Derrick Henry, Josh Jacobs"
-venv_data\Scripts\python.exe scripts\generate_ranking_graphic.py --type hypothetical --mover "Josh Allen" --to 17 --from 11 --start 13 --top 12
+venv\Scripts\python.exe scripts\generate_ranking_graphic.py --type overall --top 12
+venv\Scripts\python.exe scripts\generate_ranking_graphic.py --type position --position RB --top 12
+venv\Scripts\python.exe scripts\generate_ranking_graphic.py --type favorites --top 10
+venv\Scripts\python.exe scripts\generate_ranking_graphic.py --type compare --players "Derrick Henry, Josh Jacobs"
+venv\Scripts\python.exe scripts\generate_ranking_graphic.py --type hypothetical --mover "Josh Allen" --to 17 --from 11 --start 13 --top 12
 ```
 
 Graphic types: `overall`, `position`, `favorites`, `compare`, `movers`, `value`,
@@ -60,6 +93,9 @@ venv\Scripts\python.exe scripts\scrape_vegas_snapshot.py        # FantasyPoints 
 venv\Scripts\python.exe scripts\ingest_espn_rankings.py         # ESPN consensus
 venv\Scripts\python.exe scripts\parse_sleeper_adp.py            # Sleeper ADP -> data/sleeper_adp_2026.csv
 venv\Scripts\python.exe analysis\ranking_diff_report.py         # diff vs last run -> movers graphic input
+
+# Rebuild historical nflverse tables (the ONLY step that uses venv_data / Python 3.13)
+venv_data\Scripts\python.exe scripts\ingest_historical_data.py  # nflverse stats/schedules/ADP
 ```
 
 ---
