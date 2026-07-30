@@ -1,0 +1,1912 @@
+FANTASY
+RUSHING
+RECEIVING
+PASSING
+PTS
+ADP
+ATT
+YD
+TD
+REC
+TAR
+YD
+TD
+CMP
+ATT
+YD
+TD
+B. Robinson
+B. Robinson
+RB - ATL(11)
+Sun 12:00 PM@ PIT
+293
+1.9
+280
+1372
+9
+64
+-
+537
+3
+-
+-
+-
+-
+J. Gibbs
+J. Gibbs
+RB - DET(6)
+Sun 12:00 PMvs NO
+300
+2.3
+255
+1251
+12
+63
+-
+533
+3
+-
+-
+-
+-
+J. Chase
+J. Chase
+WR - CIN(6)
+Sun 12:00 PMvs TB
+257
+3.7
+3
+16
+-
+109
+-
+1345
+11
+-
+-
+-
+-
+P. Nacua
+P. Nacua
+WR - LAR(11)
+Thu 7:35 PMvs SF
+259
+4.8
+10
+55
+-
+107
+-
+1400
+10
+-
+-
+-
+-
+C. McCaffrey
+C. McCaffrey
+RB - SF(8)
+Thu 7:35 PM@ LAR
+256
+5.7
+240
+984
+7
+70
+-
+606
+4
+-
+-
+-
+-
+J. Taylor
+J. Taylor
+RB - IND(13)
+Sun 12:00 PMvs BAL
+254
+6.4
+287
+1385
+11
+36
+-
+278
+1
+-
+-
+-
+-
+J. Smith-Njigba
+J. Smith-Njigba
+WR - SEA(11)
+Wed 7:20 PMvs NE
+235
+7.3
+6
+33
+-
+99
+-
+1343
+8
+-
+-
+-
+-
+A. St. Brown
+A. St. Brown
+WR - DET(6)
+Sun 12:00 PMvs NO
+228
+8.2
+3
+16
+-
+106
+-
+1249
+8
+-
+-
+-
+-
+J. Cook
+J. Cook
+RB - BUF(7)
+Sun 12:00 PM@ HOU
+245
+8.6
+264
+1270
+11
+31
+-
+268
+2
+-
+-
+-
+-
+C. Lamb
+C. Lamb
+WR - DAL(14)
+Sun 7:20 PM@ NYG
+223
+10.3
+3
+16
+-
+96
+-
+1249
+8
+-
+-
+-
+-
+J. Jefferson
+J. Jefferson
+WR - MIN(6)
+Sun 3:25 PMvs GB
+205
+11.4
+1
+6
+-
+90
+-
+1178
+7
+-
+-
+-
+-
+A. Jeanty
+A. Jeanty
+RB - LV(13)
+Sun 3:25 PMvs MIA
+235
+11.9
+281
+1152
+8
+50
+-
+383
+2
+-
+-
+-
+-
+S. Barkley
+S. Barkley
+RB - PHI(10)
+Sun 3:25 PMvs WAS
+228
+13.5
+271
+1220
+8
+37
+-
+277
+2
+-
+-
+-
+-
+D. Achane
+D. Achane
+RB - MIA(6)
+Sun 3:25 PM@ LV
+218
+13.6
+212
+1040
+6
+55
+-
+424
+2
+-
+-
+-
+-
+O. Hampton
+O. Hampton
+RB - LAC(7)
+Sun 3:25 PMvs ARI
+219
+14.7
+232
+1025
+8
+48
+-
+364
+2
+-
+-
+-
+-
+D. London
+D. London
+WR - ATL(11)
+Ques
+Sun 12:00 PM@ PIT
+205
+15.5
+1
+6
+-
+90
+-
+1156
+7
+-
+-
+-
+-
+C. Brown
+C. Brown
+RB - CIN(6)
+Sun 12:00 PMvs TB
+227
+16.4
+220
+945
+8
+57
+-
+417
+3
+-
+-
+-
+-
+T. McBride
+T. McBride
+TE - ARI(14)
+Sun 3:25 PM@ LAC
+191
+17.1
+-
+-
+-
+99
+-
+999
+7
+-
+-
+-
+-
+B. Bowers
+B. Bowers
+TE - LV(13)
+Sun 3:25 PMvs MIA
+188
+18.0
+4
+16
+-
+93
+-
+979
+7
+-
+-
+-
+-
+A. Brown
+A. Brown
+WR - NE(11)
+Wed 7:20 PM@ SEA
+204
+18.2
+1
+6
+-
+80
+-
+1189
+7
+-
+-
+-
+-
+N. Collins
+N. Collins
+WR - HOU(8)
+Sun 12:00 PMvs BUF
+206
+18.5
+3
+17
+-
+80
+-
+1201
+7
+-
+-
+-
+-
+K. Walker
+K. Walker
+RB - KC(5)
+Mon 7:15 PMvs DEN
+226
+20.6
+259
+1158
+9
+37
+-
+272
+2
+-
+-
+-
+-
+D. Henry
+D. Henry
+RB - BAL(13)
+Sun 12:00 PM@ IND
+238
+22.0
+281
+1406
+12
+17
+-
+133
+1
+-
+-
+-
+-
+J. Love
+J. Loverookie-label
+RB - ARI(14)
+Sun 3:25 PM@ LAC
+212
+22.5
+230
+1003
+6
+53
+-
+392
+2
+-
+-
+-
+-
+R. Rice
+R. Rice
+WR - KC(5)
+Mon 7:15 PMvs DEN
+187
+23.0
+6
+30
+-
+89
+-
+976
+7
+-
+-
+-
+-
+J. Allen
+J. Allen
+QB - BUF(7)
+Sun 12:00 PM@ HOU
+362
+24.2
+110
+535
+11
+-
+-
+-
+-
+313
+474
+3650
+27
+J. Jacobs
+J. Jacobs
+RB - GB(11)
+Sun 3:25 PM@ MIN
+186
+25.2
+217
+918
+8
+33
+-
+258
+1
+-
+-
+-
+-
+K. Williams
+K. Williams
+RB - LAR(11)
+Thu 7:35 PMvs SF
+192
+26.6
+228
+981
+8
+32
+-
+219
+2
+-
+-
+-
+-
+G. Pickens
+*
+G. Pickens
+WR - DAL(14)
+Sun 7:20 PM@ NYG
+206
+27.1
+1
+6
+-
+80
+-
+1211
+7
+-
+-
+-
+-
+C. Olave
+C. Olave
+WR - NO(8)
+Sun 12:00 PM@ DET
+192
+31.8
+1
+6
+-
+80
+-
+1072
+7
+-
+-
+-
+-
+B. Hall
+B. Hall
+RB - NYJ(13)
+Sun 12:00 PM@ TEN
+196
+33.0
+224
+1006
+6
+38
+-
+320
+2
+-
+-
+-
+-
+J. Williams
+J. Williams
+RB - DAL(14)
+Sun 7:20 PM@ NYG
+189
+35.7
+239
+1004
+7
+37
+-
+239
+1
+-
+-
+-
+-
+T. McMillan
+T. McMillan
+WR - CAR(5)
+Sun 12:00 PMvs CHI
+179
+37.2
+1
+6
+-
+74
+-
+1033
+6
+-
+-
+-
+-
+T. Higgins
+T. Higgins
+WR - CIN(6)
+Sun 12:00 PMvs TB
+180
+37.6
+1
+6
+-
+71
+-
+998
+7
+-
+-
+-
+-
+G. Wilson
+G. Wilson
+WR - NYJ(13)
+Sun 12:00 PM@ TEN
+188
+37.9
+3
+16
+-
+86
+-
+1075
+6
+-
+-
+-
+-
+M. Nabers
+M. Nabers
+WR - NYG(8)
+Ques
+Sun 7:20 PMvs DAL
+181
+38.2
+3
+15
+-
+76
+-
+978
+7
+-
+-
+-
+-
+L. Jackson
+L. Jackson
+QB - BAL(13)
+Sun 12:00 PM@ IND
+326
+38.5
+119
+668
+5
+-
+-
+-
+-
+270
+415
+3380
+27
+D. Smith
+D. Smith
+WR - PHI(10)
+Sun 3:25 PMvs WAS
+179
+39.0
+1
+6
+-
+78
+-
+1035
+6
+-
+-
+-
+-
+C. Skattebo
+C. Skattebo
+RB - NYG(8)
+Sun 7:20 PMvs DAL
+188
+39.2
+225
+938
+6
+44
+-
+317
+1
+-
+-
+-
+-
+T. Etienne
+RB - NO(8)
+Sun 12:00 PM@ DET
+190
+39.5
+226
+950
+6
+36
+-
+287
+2
+-
+-
+-
+-
+B. Irving
+B. Irving
+RB - TB(10)
+Sun 12:00 PM@ CIN
+179
+40.5
+211
+902
+6
+36
+-
+271
+2
+-
+-
+-
+-
+L. McConkey
+L. McConkey
+WR - LAC(7)
+Sun 3:25 PMvs ARI
+172
+41.0
+2
+11
+-
+77
+-
+962
+6
+-
+-
+-
+-
+T. Henderson
+T. Henderson
+RB - NE(11)
+Wed 7:20 PM@ SEA
+162
+41.3
+176
+785
+6
+35
+-
+260
+1
+-
+-
+-
+-
+C. Loveland
+C. Loveland
+TE - CHI(10)
+Sun 12:00 PM@ CAR
+167
+42.1
+1
+4
+-
+80
+-
+905
+6
+-
+-
+-
+-
+E. Egbuka
+E. Egbuka
+WR - TB(10)
+Sun 12:00 PM@ CIN
+183
+43.0
+3
+21
+-
+75
+-
+1009
+7
+-
+-
+-
+-
+Z. Flowers
+Z. Flowers
+WR - BAL(13)
+Sun 12:00 PM@ IND
+188
+43.5
+5
+29
+-
+81
+-
+1103
+6
+-
+-
+-
+-
+L. Burden
+L. Burden
+WR - CHI(10)
+Sun 12:00 PM@ CAR
+167
+44.9
+10
+61
+-
+72
+-
+886
+6
+-
+-
+-
+-
+T. McLaurin
+T. McLaurin
+WR - WAS(7)
+Sun 3:25 PM@ PHI
+179
+45.0
+1
+7
+-
+75
+-
+1045
+6
+-
+-
+-
+-
+J. Waddle
+J. Waddle
+WR - DEN(10)
+Mon 7:15 PM@ KC
+164
+45.5
+3
+16
+-
+70
+-
+911
+6
+-
+-
+-
+-
+Q. Judkins
+Q. Judkins
+RB - CLE(11)
+Sun 12:00 PM@ JAX
+180
+49.6
+244
+1012
+6
+32
+-
+228
+1
+-
+-
+-
+-
+T. Warren
+T. Warren
+TE - IND(13)
+Sun 12:00 PMvs BAL
+155
+51.2
+5
+18
+-
+80
+-
+829
+5
+-
+-
+-
+-
+J. Williams
+J. Williams
+WR - DET(6)
+Sun 12:00 PMvs NO
+176
+52.2
+8
+44
+-
+60
+-
+998
+7
+-
+-
+-
+-
+D. Montgomery
+D. Montgomery
+RB - HOU(8)
+Sun 12:00 PMvs BUF
+186
+53.5
+236
+986
+7
+33
+-
+245
+1
+-
+-
+-
+-
+D. Moore
+D. Moore
+WR - BUF(7)
+Sun 12:00 PM@ HOU
+148
+53.9
+5
+29
+-
+63
+-
+851
+5
+-
+-
+-
+-
+D. Maye
+D. Maye
+QB - NE(11)
+Wed 7:20 PM@ SEA
+321
+54.0
+85
+416
+4
+-
+-
+-
+-
+344
+505
+3854
+29
+B. Tuten
+B. Tuten
+RB - JAX(7)
+Sun 12:00 PMvs CLE
+159
+54.1
+184
+794
+6
+32
+-
+234
+1
+-
+-
+-
+-
+D. Adams
+D. Adams
+WR - LAR(11)
+Thu 7:35 PMvs SF
+158
+55.0
+-
+-
+-
+61
+-
+772
+8
+-
+-
+-
+-
+M. Evans
+M. Evans
+WR - SF(8)
+Thu 7:35 PM@ LAR
+173
+57.0
+-
+-
+-
+66
+-
+900
+8
+-
+-
+-
+-
+J. Burrow
+J. Burrow
+QB - CIN(6)
+Sun 12:00 PMvs TB
+306
+58.2
+46
+138
+2
+-
+-
+-
+-
+377
+549
+4008
+33
+D. Swift
+D. Swift
+RB - CHI(10)
+Sun 12:00 PM@ CAR
+187
+58.6
+209
+940
+7
+37
+-
+287
+1
+-
+-
+-
+-
+C. Tate
+C. Taterookie-label
+WR - TEN(9)
+Sun 12:00 PMvs NYJ
+155
+62.5
+2
+11
+-
+71
+-
+882
+5
+-
+-
+-
+-
+R. Odunze
+R. Odunze
+WR - CHI(10)
+Sun 12:00 PM@ CAR
+157
+62.6
+1
+6
+-
+62
+-
+891
+6
+-
+-
+-
+-
+J. Price
+J. Pricerookie-label
+RB - SEA(11)
+Wed 7:20 PMvs NE
+161
+63.0
+212
+912
+7
+19
+-
+138
+1
+-
+-
+-
+-
+C. Watson
+C. Watson
+WR - GB(11)
+Sun 3:25 PM@ MIN
+160
+63.3
+2
+13
+-
+57
+-
+941
+6
+-
+-
+-
+-
+J. Daniels
+J. Daniels
+QB - WAS(7)
+Sun 3:25 PM@ PHI
+314
+64.1
+126
+686
+6
+-
+-
+-
+-
+316
+479
+3353
+22
+B. Thomas
+B. Thomas
+WR - JAX(7)
+Sun 12:00 PMvs CLE
+164
+65.6
+3
+17
+-
+62
+-
+897
+7
+-
+-
+-
+-
+J. Warren
+J. Warren
+RB - PIT(9)
+Sun 12:00 PMvs ATL
+153
+66.6
+172
+759
+5
+36
+-
+267
+1
+-
+-
+-
+-
+H. Fannin
+H. Fannin
+TE - CLE(11)
+Sun 12:00 PM@ JAX
+143
+66.7
+6
+25
+-
+74
+-
+739
+5
+-
+-
+-
+-
+T. Kraft
+T. Kraft
+TE - GB(11)
+PUP
+Sun 3:25 PM@ MIN
+140
+68.0
+-
+-
+-
+67
+-
+761
+5
+-
+-
+-
+-
+J. Hurts
+J. Hurts
+QB - PHI(10)
+Sun 3:25 PMvs WAS
+311
+68.4
+120
+515
+9
+-
+-
+-
+-
+300
+462
+3326
+21
+R. Harvey
+R. Harvey
+RB - DEN(10)
+Mon 7:15 PM@ KC
+126
+69.3
+124
+515
+3
+37
+-
+276
+2
+-
+-
+-
+-
+J. Tyson
+J. Tysonrookie-label
+WR - NO(8)
+Sun 12:00 PM@ DET
+146
+71.6
+2
+10
+-
+66
+-
+816
+5
+-
+-
+-
+-
+C. Hubbard
+C. Hubbard
+RB - CAR(5)
+Sun 12:00 PMvs CHI
+148
+73.0
+190
+806
+5
+29
+-
+193
+1
+-
+-
+-
+-
+R. Stevenson
+R. Stevenson
+RB - NE(11)
+Ques
+Wed 7:20 PM@ SEA
+152
+73.7
+177
+759
+6
+29
+-
+214
+1
+-
+-
+-
+-
+K. Pitts
+K. Pitts
+TE - ATL(11)
+Sun 12:00 PM@ PIT
+139
+76.2
+-
+-
+-
+66
+-
+756
+5
+-
+-
+-
+-
+rison
+M. Harrison
+WR - ARI(14)
+Sun 3:25 PM@ LAC
+146
+76.9
+-
+-
+-
+60
+-
+857
+5
+-
+-
+-
+-
+M. Lemon
+M. Lemonrookie-label
+WR - PHI(10)
+Sun 3:25 PMvs WAS
+139
+77.9
+2
+10
+-
+60
+-
+775
+5
+-
+-
+-
+-
+D. Metcalf
+D. Metcalf
+WR - PIT(9)
+Sun 12:00 PMvs ATL
+152
+78.1
+2
+10
+-
+62
+-
+843
+6
+-
+-
+-
+-
+S. LaPorta
+S. LaPorta
+TE - DET(6)
+Sun 12:00 PMvs NO
+155
+78.4
+1
+3
+-
+74
+-
+817
+6
+-
+-
+-
+-
+K. Monangai
+K. Monangai
+RB - CHI(10)
+Sun 12:00 PM@ CAR
+143
+78.8
+166
+751
+6
+23
+-
+165
+1
+-
+-
+-
+-
+A. Pierce
+A. Pierce
+WR - IND(13)
+PUP
+Sun 12:00 PMvs BAL
+157
+81.8
+1
+7
+-
+57
+-
+918
+6
+-
+-
+-
+-
+T. Pollard
+T. Pollard
+RB - TEN(9)
+Sun 12:00 PMvs NYJ
+146
+82.1
+189
+794
+5
+28
+-
+187
+1
+-
+-
+-
+-
+M. Wilson
+M. Wilson
+WR - ARI(14)
+Sun 3:25 PM@ LAC
+137
+82.6
+1
+6
+-
+59
+-
+764
+5
+-
+-
+-
+-
+C. Sutton
+C. Sutton
+WR - DEN(10)
+Mon 7:15 PM@ KC
+140
+83.1
+-
+-
+-
+56
+-
+755
+6
+-
+-
+-
+-
+R. Dowdle
+R. Dowdle
+RB - PIT(9)
+Sun 12:00 PMvs ATL
+142
+83.2
+159
+678
+4
+38
+-
+273
+1
+-
+-
+-
+-
+J. Herbert
+J. Herbert
+QB - LAC(7)
+Sun 3:25 PMvs ARI
+295
+85.7
+70
+338
+3
+-
+-
+-
+-
+355
+533
+3842
+26
+C. Williams
+C. Williams
+QB - CHI(10)
+Sun 12:00 PM@ CAR
+299
+86.5
+75
+373
+3
+-
+-
+-
+-
+316
+514
+3651
+28
+P. Washington
+P. Washington
+WR - JAX(7)
+Sun 12:00 PMvs CLE
+158
+87.4
+9
+53
+-
+65
+-
+824
+6
+-
+-
+-
+-
+J. Dart
+J. Dart
+QB - NYG(8)
+Sun 7:20 PMvs DAL
+297
+88.8
+106
+539
+6
+-
+-
+-
+-
+322
+495
+3366
+22
+J. Dobbins
+J. Dobbins
+RB - DEN(10)
+Mon 7:15 PM@ KC
+147
+90.6
+171
+732
+6
+26
+-
+190
+1
+-
+-
+-
+-
+B. Corum
+B. Corum
+RB - LAR(11)
+Thu 7:35 PMvs SF
+128
+90.8
+172
+757
+6
+15
+-
+106
+-
+-
+-
+-
+-
+R. Pearsall
+R. Pearsall
+WR - SF(8)
+Ques
+Thu 7:35 PM@ LAR
+140
+92.6
+3
+18
+-
+57
+-
+794
+5
+-
+-
+-
+-
+C. Godwin
+C. Godwin
+WR - TB(10)
+Sun 12:00 PM@ CIN
+140
+93.0
+1
+6
+-
+68
+-
+750
+5
+-
+-
+-
+-
+T. Lawrence
+T. Lawrence
+QB - JAX(7)
+Sun 12:00 PMvs CLE
+303
+93.8
+79
+339
+5
+-
+-
+-
+-
+329
+522
+3788
+26
+J. Meyers
+J. Meyers
+WR - JAX(7)
+Sun 12:00 PMvs CLE
+137
+95.9
+4
+21
+-
+64
+-
+732
+5
+-
+-
+-
+-
+D. Kincaid
+D. Kincaid
+TE - BUF(7)
+Sun 12:00 PM@ HOU
+126
+97.5
+-
+-
+-
+63
+-
+701
+4
+-
+-
+-
+-
+D. Prescott
+D. Prescott
+QB - DAL(14)
+Sun 7:20 PM@ NYG
+304
+97.8
+44
+152
+1
+-
+-
+-
+-
+389
+580
+4292
+31
+M. Pittman
+M. Pittman
+WR - PIT(9)
+Sun 12:00 PMvs ATL
+134
+98.0
+1
+7
+-
+68
+-
+748
+4
+-
+-
+-
+-
+J. Addison
+J. Addison
+WR - MIN(6)
+Sun 3:25 PMvs GB
+139
+98.4
+4
+22
+-
+58
+-
+782
+5
+-
+-
+-
+-
+G. Kittle
+G. Kittle
+TE - SF(8)
+PUP
+Thu 7:35 PM@ LAR
+138
+99.2
+-
+-
+-
+62
+-
+713
+6
+-
+-
+-
+-
+P. Mahomes
+P. Mahomes
+QB - KC(5)
+Ques
+Mon 7:15 PMvs DEN
+287
+101.0
+47
+202
+1
+-
+-
+-
+-
+370
+555
+3962
+29
+W. Robinson
+W. Robinson
+WR - TEN(9)
+Sun 12:00 PMvs NYJ
+127
+102.0
+3
+15
+-
+66
+-
+685
+4
+-
+-
+-
+-
+O. Gadsden
+O. Gadsden
+TE - LAC(7)
+Sun 3:25 PMvs ARI
+122
+102.2
+-
+-
+-
+57
+-
+636
+5
+-
+-
+-
+-
+Q. Johnston
+Q. Johnston
+WR - LAC(7)
+Sun 3:25 PMvs ARI
+135
+102.5
+2
+11
+-
+58
+-
+748
+5
+-
+-
+-
+-
+J. Ferguson
+J. Ferguson
+TE - DAL(14)
+Sun 7:20 PM@ NYG
+125
+105.3
+-
+-
+-
+70
+-
+618
+5
+-
+-
+-
+-
+B. Purdy
+B. Purdy
+QB - SF(8)
+Thu 7:35 PM@ LAR
+303
+105.8
+64
+242
+3
+-
+-
+-
+-
+333
+494
+3900
+30
+A. Jones
+A. Jones
+RB - MIN(6)
+Sun 3:25 PMvs GB
+120
+107.4
+131
+563
+3
+34
+-
+248
+1
+-
+-
+-
+-
+J. Croskey-Merritt
+J. Croskey-Merritt
+RB - WAS(7)
+Sun 3:25 PM@ PHI
+118
+108.0
+141
+614
+5
+19
+-
+135
+1
+-
+-
+-
+-
+K. Gainwell
+K. Gainwell
+RB - TB(10)
+Sun 12:00 PM@ CIN
+129
+109.8
+99
+418
+3
+47
+-
+355
+2
+-
+-
+-
+-
+J. Reed
+J. Reed
+WR - GB(11)
+Sun 3:25 PM@ MIN
+137
+110.5
+12
+68
+-
+58
+-
+730
+5
+-
+-
+-
+-
+J. Brooks
+J. Brooks
+RB - CAR(5)
+Sun 12:00 PMvs CHI
+109
+112.0
+122
+524
+4
+23
+-
+166
+1
+-
+-
+-
+-
