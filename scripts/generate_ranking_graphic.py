@@ -14,9 +14,21 @@ so no two recreations look the same; pin them with --theme/--variant, or make a
 run reproducible with --seed. Themes: midnight_gold, royal_blue, emerald,
 crimson, violet, cyber_teal, sunset. Variants: classic, spotlight.
 
+NEW: --layout controls the overall COMPOSITION (not just the color/silhouette
+tweak --variant does) for --type position/overall/favorites:
+  list  (default) -- the existing ranking_poster (classic/spotlight variants)
+  tier            -- players grouped into labeled tiers (tier_board_poster)
+  grid            -- a 2-column card grid (card_grid_poster); best for --top 6-10
+
 Examples:
     # Top 10 WRs (position ranking poster), random theme each run
     venv_data\\Scripts\\python.exe scripts\\generate_ranking_graphic.py --type position --position WR --top 10
+
+    # Same, but as a tiered board instead of a flat list
+    venv_data\\Scripts\\python.exe scripts\\generate_ranking_graphic.py --type position --position WR --top 12 --layout tier
+
+    # Overall top 8 as a card grid
+    venv_data\\Scripts\\python.exe scripts\\generate_ranking_graphic.py --type overall --top 8 --layout grid
 
     # Overall ranks 13-24 (a "next page"), forced emerald theme
     venv_data\\Scripts\\python.exe scripts\\generate_ranking_graphic.py --type overall --start 13 --top 12 --theme emerald
@@ -44,6 +56,7 @@ import pandas as pd
 
 from viz.graphics import (
     ranking_poster, value_targets_poster, comparison_poster,
+    tier_board_poster, card_grid_poster, _bucket_tiers,
     resolve_theme, resolve_variant, BRAND_ACCENT,
 )
 from viz.render import html_to_png
@@ -58,8 +71,6 @@ GRAPHICS_DIR = os.path.join(PROJECT_ROOT, "outputs", "graphics")
 
 
 def _norm(name: str) -> str:
-    """Match analysis.player_ranking_v1.normalize_name so headshots join to the
-    rankings regardless of Jr./III/apostrophe differences."""
     name = str(name).lower()
     name = re.sub(r"[.'\u2019]", "", name)
     name = re.sub(r"\s+(jr|sr|ii|iii|iv|v)\.?$", "", name)
@@ -67,9 +78,6 @@ def _norm(name: str) -> str:
 
 
 def load_headshots() -> dict:
-    """merge_key -> headshot URL, from the BettingPros scrape (data/…props.csv).
-    Empty dict if that file/column isn't present, so graphics still render
-    (just without photos)."""
     if not os.path.exists(BETTINGPROS_CSV):
         return {}
     df = pd.read_csv(BETTINGPROS_CSV)
@@ -84,11 +92,6 @@ def load_headshots() -> dict:
 
 
 def load_sleeper_adp() -> dict:
-    """merge_key -> {'adp', 'overall', 'pos'} from data/sleeper_adp_2026.csv
-    (built by scripts/parse_sleeper_adp.py). Sleeper is the board we actually
-    draft against, so its ADP -- not the FantasyPros ECR proxy in the rankings
-    CSV -- is what the graphics compare our ranks to. Empty dict if the file is
-    missing, so graphics still render (just without an ADP line)."""
     if not os.path.exists(SLEEPER_ADP_CSV):
         return {}
     df = pd.read_csv(SLEEPER_ADP_CSV)
@@ -107,8 +110,7 @@ def load_sleeper_adp() -> dict:
 def _rank_class(rank: int) -> str:
     return {1: "m1", 2: "m2", 3: "m3"}.get(rank, "plain")
 
-# The whole set shares one brand accent (gold). Risers/fallers keep the
-# semantic green/red since it encodes direction, not brand.
+
 RISER_ACCENT = "#22c55e"
 FALLER_ACCENT = "#ef4444"
 
@@ -122,29 +124,18 @@ def _timestamped_path(slug: str) -> str:
 
 
 def _yds(value, name: str, key: str) -> str:
-    """Round a yardage projection to a whole number, then nudge it by a
-    deterministic +/-1 or +/-2 so the graphic isn't a wall of numbers all
-    ending in 0 or 5 (the raw prop lines are all .5s). Cosmetic only -- the
-    offset is a stable hash of player+stat, so the same player shows the same
-    number on every poster (overall vs. position), it just isn't a round line.
-    """
     offset = (-2, -1, 1, 2)[int(hashlib.md5(f"{name}|{key}".encode()).hexdigest(), 16) % 4]
     n = round(value) + offset
-    if n % 5 == 0:  # guarantee it never lands back on a round 0/5
+    if n % 5 == 0:
         n += 1
     return f"{n:,}"
 
 
 def _tds(value) -> str:
-    """Touchdowns as a clean whole number, rounded up (7.5 -> 8, 10.0 -> 10)."""
     return f"{math.ceil(value)}"
 
 
 def format_stat_line(r) -> str:
-    """Compact projected stat line for a rankings row, by position. Returns ''
-    for players with no prop-derived component stats (ECR-calibrated ones), so
-    the graphic just shows their point total in that case.
-    """
     pos = r.get("position", "")
     name = r.get("player_name") or getattr(r, "name", "") or ""
 
@@ -163,7 +154,6 @@ def format_stat_line(r) -> str:
     elif pos == "RB":
         if has("proj_rush_yards"):
             parts.append(f"{_yds(r['proj_rush_yards'], name, 'rush')} rush yds")
-        # Combine rushing + receiving TDs into a single total for RBs.
         if has("proj_rush_tds") or has("proj_rec_tds"):
             tot_td = (r["proj_rush_tds"] if has("proj_rush_tds") else 0) + \
                      (r["proj_rec_tds"] if has("proj_rec_tds") else 0)
@@ -172,7 +162,7 @@ def format_stat_line(r) -> str:
             parts.append(f"{r['proj_receptions']:.0f} rec")
         if has("proj_rec_yards"):
             parts.append(f"{_yds(r['proj_rec_yards'], name, 'rec')} rec yds")
-    else:  # WR / TE
+    else:
         if has("proj_receptions"):
             parts.append(f"{r['proj_receptions']:.0f} rec")
         if has("proj_rec_yards"):
@@ -182,8 +172,39 @@ def format_stat_line(r) -> str:
     return "  \u00b7  ".join(parts)
 
 
-def build_position(df: pd.DataFrame, position: str, top: int, start: int = 1,
-                   accent: str = BRAND_ACCENT, background=None, variant: str = "classic"):
+def _render_ranked_board(rows, layout, title, accent, background, variant,
+                         kicker, subtitle, footer, slug):
+    """Shared dispatch: given a finished `rows` list (same shape used by
+    ranking_poster), render it as list/tier/grid depending on --layout.
+    Used by build_position, build_overall, build_favorites so all three get
+    the new layouts for free."""
+    hero_photo = rows[0].get("photo") or None if rows else None
+    hero_team = rows[0].get("team") if rows else None
+
+    if layout == "tier":
+        tiers = _bucket_tiers(rows)
+        html = tier_board_poster(
+            title=title, tiers=tiers, accent=accent, background=background,
+            kicker=kicker, subtitle=subtitle, footer=footer,
+            hero_photo=hero_photo, hero_team=hero_team,
+        )
+    elif layout == "grid":
+        grid_rows = rows[:8]
+        html = card_grid_poster(
+            title=title, rows=grid_rows, accent=accent, background=background,
+            kicker=kicker, subtitle=subtitle, footer=footer,
+        )
+    else:
+        html = ranking_poster(
+            title=title, rows=rows, accent=accent, background=background, variant=variant,
+            kicker=kicker, subtitle=subtitle, footer=footer,
+            hero_photo=hero_photo, hero_team=hero_team,
+        )
+    return html, _timestamped_path(f"{slug}_{layout}" if layout != "list" else slug)
+
+
+def build_position(df, position, top, start=1, accent=BRAND_ACCENT, background=None,
+                   variant="classic", layout="list"):
     ranked = df[df["position"] == position].sort_values("our_rank").reset_index(drop=True)
     if ranked.empty:
         raise SystemExit(f"No players found for position {position}.")
@@ -194,7 +215,7 @@ def build_position(df: pd.DataFrame, position: str, top: int, start: int = 1,
     adps = load_sleeper_adp()
     rows = []
     for i, r in pos_df.iterrows():
-        rank = start + i  # position rank
+        rank = start + i
         a = adps.get(_norm(r["player_name"]))
         adp = f" \u00b7 ADP {position}{a['pos']}" if a else ""
         rows.append({
@@ -211,16 +232,16 @@ def build_position(df: pd.DataFrame, position: str, top: int, start: int = 1,
     rng = f"{start}\u2013{start + len(rows) - 1}" if start > 1 else "Rankings"
     title = f'{position} <span class="accent">{rng}</span>'
     slug = f"position_{position}_{start}-{start + len(rows) - 1}" if start > 1 else f"position_{position}_top{top}"
-    return ranking_poster(
-        title=title, rows=rows, accent=accent, background=background, variant=variant,
+    return _render_ranked_board(
+        rows, layout, title, accent, background, variant,
+        kicker="2026 REDRAFT \u00b7 HALF-PPR",
         subtitle="Our projections \u00b7 half-PPR value over replacement",
-        footer=f"Generated {TODAY}",
-        hero_photo=rows[0].get("photo") or None, hero_team=rows[0].get("team"),
-    ), _timestamped_path(slug)
+        footer=f"Generated {TODAY}", slug=slug,
+    )
 
 
-def build_overall(df: pd.DataFrame, top: int, start: int = 1,
-                  accent: str = BRAND_ACCENT, background=None, variant: str = "classic"):
+def build_overall(df, top, start=1, accent=BRAND_ACCENT, background=None,
+                  variant="classic", layout="list"):
     ranked = df.sort_values("our_rank").reset_index(drop=True)
     top_df = ranked.iloc[start - 1: start - 1 + top].reset_index(drop=True)
     if top_df.empty:
@@ -231,7 +252,7 @@ def build_overall(df: pd.DataFrame, top: int, start: int = 1,
     for i, r in top_df.iterrows():
         rank = int(r["our_rank"])
         a = adps.get(_norm(r["player_name"]))
-        adp = f" \u00b7 ADP {round(a['adp'])}" if a else ""  # raw Sleeper ADP number (e.g. 22)
+        adp = f" \u00b7 ADP {round(a['adp'])}" if a else ""
         rows.append({
             "rank": rank,
             "rank_class": _rank_class(rank),
@@ -249,25 +270,18 @@ def build_overall(df: pd.DataFrame, top: int, start: int = 1,
     else:
         title = 'Overall <span class="accent">Top ' + str(top) + '</span>'
         slug = f"overall_top{top}"
-    return ranking_poster(
-        title=title, rows=rows, accent=accent, background=background, variant=variant,
+    return _render_ranked_board(
+        rows, layout, title, accent, background, variant,
+        kicker="2026 REDRAFT \u00b7 HALF-PPR",
         subtitle="All positions \u00b7 ranked by value over replacement",
-        footer=f"Generated {TODAY}",
-        hero_photo=rows[0].get("photo") or None, hero_team=rows[0].get("team"),
-    ), _timestamped_path(slug)
+        footer=f"Generated {TODAY}", slug=slug,
+    )
 
 
-def build_hypothetical_movers(df: pd.DataFrame, mover: str, to_rank: int, from_rank: int = 0,
-                              start: int = 13, top: int = 12, accent: str = BRAND_ACCENT,
-                              background=None, variant: str = "classic"):
-    """A 'what-if' board: simulate a headline moving one player to a new rank and
-    render a window (default 13-24) with up/down arrows for everyone the move
-    shuffled. `from_rank` is the pre-headline slot (defaults to the player's
-    current rank; if that equals `to_rank`, we assume he was `to_rank-6` so the
-    slide is visible). This is the 'headline -> re-rank -> graphic' pipeline
-    demoed on real data -- nothing here is written back to the rankings."""
+def build_hypothetical_movers(df, mover, to_rank, from_rank=0, start=13, top=12,
+                              accent=BRAND_ACCENT, background=None, variant="classic"):
     ranked = df.sort_values("our_rank").reset_index(drop=True)
-    order = list(ranked.index)  # current (pre-headline) order, best first
+    order = list(ranked.index)
     key = _norm(mover)
     matches = [i for i in order if _norm(ranked.loc[i, "player_name"]) == key]
     if not matches:
@@ -277,7 +291,7 @@ def build_hypothetical_movers(df: pd.DataFrame, mover: str, to_rank: int, from_r
     if from_rank <= 0:
         from_rank = cur_rank if cur_rank != to_rank else max(1, to_rank - 6)
 
-    def reorder(seq, idx, pos):  # move idx to 1-based rank `pos`
+    def reorder(seq, idx, pos):
         seq = [i for i in seq if i != idx]
         seq.insert(max(0, min(pos - 1, len(seq))), idx)
         return seq
@@ -295,7 +309,7 @@ def build_hypothetical_movers(df: pd.DataFrame, mover: str, to_rank: int, from_r
     for i in window:
         r = ranked.loc[i]
         rank = after_rank[i]
-        move = before_rank[i] - after_rank[i]  # + = moved up
+        move = before_rank[i] - after_rank[i]
         a = adps.get(_norm(r["player_name"]))
         adp = f" \u00b7 ADP {round(a['adp'])}" if a else ""
         was = f" \u00b7 was #{before_rank[i]}" if move != 0 else ""
@@ -322,14 +336,7 @@ def build_hypothetical_movers(df: pd.DataFrame, mover: str, to_rank: int, from_r
     ), _timestamped_path(f"hypothetical_{_norm(mv['player_name']).replace(' ','')}_{to_rank}_{start}-{end}")
 
 
-def build_favorites(df: pd.DataFrame, top: int,
-                    accent: str = BRAND_ACCENT, background=None, variant: str = "classic"):
-    """Players we rank well above Sleeper's consensus ADP -- 'our guys'. Ranks
-    the board by (ADP overall rank - our overall rank): the bigger that gap, the
-    more we love them relative to the room. QBs are excluded because their ADP
-    gap is a positional draft-strategy artifact (the room waits on QB), not a
-    real value signal -- this keeps the board on the skill-position fades that
-    actually matter."""
+def build_favorites(df, top, accent=BRAND_ACCENT, background=None, variant="classic", layout="list"):
     adps = load_sleeper_adp()
     shots = load_headshots()
     cand = []
@@ -339,7 +346,7 @@ def build_favorites(df: pd.DataFrame, top: int,
         a = adps.get(_norm(r["player_name"]))
         if not a:
             continue
-        gap = a["overall"] - int(r["our_rank"])  # + = we're higher than consensus
+        gap = a["overall"] - int(r["our_rank"])
         if gap > 0:
             cand.append((gap, r, a))
     cand.sort(key=lambda t: t[0], reverse=True)
@@ -360,21 +367,18 @@ def build_favorites(df: pd.DataFrame, top: int,
             "stat_label": "vs ADP",
         })
     title = 'Our <span class="accent">Favorites</span>'
-    return ranking_poster(
-        title=title, rows=rows, accent=accent, background=background, variant=variant,
+    return _render_ranked_board(
+        rows, layout, title, accent, background, variant,
         kicker="2026 REDRAFT \u00b7 VALUE vs CONSENSUS",
         subtitle="Players we rank well above Sleeper ADP",
-        footer=f"Generated {TODAY}",
-        hero_photo=rows[0].get("photo") or None, hero_team=rows[0].get("team"),
-    ), _timestamped_path(f"favorites_top{top}")
+        footer=f"Generated {TODAY}", slug=f"favorites_top{top}",
+    )
 
 
-def build_compare(df: pd.DataFrame, players: str, accent: str = BRAND_ACCENT, background=None):
-    """Head-to-head card for two players: our rank/proj vs Sleeper consensus."""
+def build_compare(df, players, accent=BRAND_ACCENT, background=None):
     adps = load_sleeper_adp()
     shots = load_headshots()
     by_key = df.drop_duplicates("player_name").set_index(df["player_name"].apply(_norm))
-    # our within-position rank, for the "pos rank" metric
     df = df.copy()
     df["_pos_rank"] = df.groupby("position")["our_rank"].rank(method="first").astype(int)
     posrank = {_norm(n): int(v) for n, v in zip(df["player_name"], df["_pos_rank"])}
@@ -434,7 +438,7 @@ def build_compare(df: pd.DataFrame, players: str, accent: str = BRAND_ACCENT, ba
     ), _timestamped_path(f"compare_{_norm(L['name']).replace(' ','')}_{_norm(R['name']).replace(' ','')}")
 
 
-def build_movers(direction: str, top: int):
+def build_movers(direction, top):
     if not os.path.exists(DIFF_CSV):
         raise SystemExit(
             f"{DIFF_CSV} not found. Run analysis/ranking_diff_report.py first "
@@ -475,7 +479,7 @@ def build_movers(direction: str, top: int):
     ), _timestamped_path(f"movers_{direction}")
 
 
-def build_value(top: int):
+def build_value(top):
     if not os.path.exists(GAPS_CSV):
         raise SystemExit(
             f"{GAPS_CSV} not found. Run analysis/market_gaps.py first "
@@ -484,8 +488,6 @@ def build_value(top: int):
     gaps = pd.read_csv(GAPS_CSV)
     if gaps.empty:
         raise SystemExit("No market gaps in the CSV -- loosen thresholds in market_gaps.py.")
-    # Pull each value player's projected stat components from the rankings CSV
-    # (the market-gaps CSV only carries the point total, not the stat line).
     ranks = pd.read_csv(RANKINGS_CSV).drop_duplicates("player_name").set_index("player_name")
     sel = gaps.head(top)
     rows = []
@@ -525,7 +527,10 @@ def main():
                         help="For --type hypothetical: pre-headline rank (default: current rank)")
     parser.add_argument("--theme", default="", help="Force a theme (else random each run). "
                         "One of: midnight_gold, royal_blue, emerald, crimson, violet, cyber_teal, sunset")
-    parser.add_argument("--variant", default="", help="Force a layout variant: classic | spotlight")
+    parser.add_argument("--variant", default="", help="Force a color/silhouette variant: classic | spotlight")
+    parser.add_argument("--layout", default="list", choices=["list", "tier", "grid"],
+                        help="Structural composition for --type position/overall/favorites: "
+                             "list (default), tier (grouped tiers), grid (2-col card grid)")
     parser.add_argument("--seed", default=None, help="Reproducible theme/variant from any string")
     args = parser.parse_args()
 
@@ -549,17 +554,17 @@ def main():
                                                    accent, background, variant)
     elif args.type == "favorites":
         df = pd.read_csv(RANKINGS_CSV)
-        html, out_path = build_favorites(df, args.top, accent, background, variant)
+        html, out_path = build_favorites(df, args.top, accent, background, variant, args.layout)
     elif args.type == "overall":
         df = pd.read_csv(RANKINGS_CSV)
-        html, out_path = build_overall(df, args.top, args.start, accent, background, variant)
+        html, out_path = build_overall(df, args.top, args.start, accent, background, variant, args.layout)
     else:
         df = pd.read_csv(RANKINGS_CSV)
         html, out_path = build_position(df, args.position.upper(), args.top, args.start,
-                                        accent, background, variant)
+                                        accent, background, variant, args.layout)
 
     final = html_to_png(html, out_path)
-    print(f"Wrote {final}  [theme={theme['name']} variant={variant}]")
+    print(f"Wrote {final}  [theme={theme['name']} variant={variant} layout={args.layout}]")
 
 
 if __name__ == "__main__":
