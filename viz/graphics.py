@@ -747,3 +747,306 @@ def comparison_poster(
   <div class="verdict">{verdict}</div>
   <div class="footer"><span>{_esc(footer) if footer else ''}</span><span>data-driven \u00b7 our projections</span></div>
 </body></html>"""
+
+"""
+Append everything below to the END of viz/graphics.py (after comparison_poster).
+These add two new, structurally distinct layouts alongside ranking_poster's
+classic/spotlight silhouettes:
+
+  - tier_board_poster: players grouped into labeled tiers with a divider
+    between groups, instead of one continuous numbered list.
+  - card_grid_poster: a 2-column grid of player "cards" (bigger photos, more
+    visual weight per player) instead of stacked rows.
+
+Both reuse the same theme system (THEMES / resolve_theme / _BG), the same
+_FX_CSS/_OVERLAYS finishing effects, and the same team_color/team_secondary/
+team_logo_url helpers already imported at the top of graphics.py -- so a
+--theme flag colors these exactly like ranking_poster does.
+"""
+
+
+def _bucket_tiers(rows: List[Dict], sizes=(1, 3, 4, 6, 8)) -> List[Dict]:
+    """Group a flat, already-ranked rows list into tiers of increasing size
+    (a tight #1-only top tier, then progressively looser groups) and label
+    them Tier 1, Tier 2, ... This is what turns build_overall/build_position's
+    normal `rows` list into the `tiers` shape tier_board_poster expects --
+    no change needed to how rows themselves are built."""
+    tiers = []
+    i = 0
+    tier_num = 1
+    while i < len(rows):
+        size = sizes[min(tier_num - 1, len(sizes) - 1)]
+        chunk = rows[i:i + size]
+        if not chunk:
+            break
+        tiers.append({"label": f"Tier {tier_num}", "rows": chunk})
+        i += size
+        tier_num += 1
+    return tiers
+
+
+def _tier_header_html(label: str, accent: str, count: int) -> str:
+    return (
+        f'<div class="tier-head" style="--accent:{accent}">'
+        f'<div class="tier-label">{_esc(label)}</div>'
+        f'<div class="tier-line"></div>'
+        f'<div class="tier-count">{count}</div>'
+        f'</div>'
+    )
+
+
+def tier_board_poster(
+    title: str,
+    tiers: List[Dict],
+    kicker: str = "2026 REDRAFT \u00b7 HALF-PPR",
+    subtitle: str = "",
+    accent: str = BRAND_ACCENT,
+    footer: str = "",
+    badge: str = "2026",
+    background: Optional[str] = None,
+    hero_photo: Optional[str] = None,
+    hero_team: Optional[str] = None,
+) -> str:
+    """Players grouped into visual tiers (Tier 1, Tier 2, ...) with a labeled
+    divider between groups, instead of one continuous numbered list.
+    `tiers` = [{"label": str, "rows": [row dicts, same shape as ranking_poster
+    rows]}, ...]. This is a genuinely different read than ranking_poster: the
+    eye processes it in chunks (matches how analysts actually talk about
+    rankings -- "he's a Tier 2 RB") rather than scanning one long list.
+    """
+    total_rows = sum(len(t["rows"]) for t in tiers)
+    av = 68 if total_rows <= 10 else (58 if total_rows <= 14 else 48)
+    rk = round(av * 0.7)
+    lg = round(av * 0.46)
+    nolg = round(av * 0.72)
+    rkf = round(rk * 0.5)
+
+    blocks = []
+    for tier in tiers:
+        rows_html = "".join(_row_html(r) for r in tier["rows"])
+        header = _tier_header_html(tier["label"], accent, len(tier["rows"]))
+        blocks.append(f'<div class="tier-block">{header}<div class="tier-rows">{rows_html}</div></div>')
+    blocks_html = "\n".join(blocks)
+
+    subtitle_html = f'<div class="subtitle">{_esc(subtitle)}</div>' if subtitle else ""
+    bg = background or _BG.format(accent=accent)
+
+    if hero_photo:
+        hero_accent = team_color(hero_team) if hero_team else accent
+        hero_logo = team_logo_url(hero_team) if hero_team else ""
+        hero_logo_html = f'<img class="hlogo" src="{hero_logo}" alt="">' if hero_logo else ""
+        header_right = (
+            f'<div class="hero" style="--hero-accent:{hero_accent}">'
+            f'<img class="hshot" src="{hero_photo}" alt="">{hero_logo_html}'
+            f'<div class="yrchip">{_esc(badge)}</div></div>'
+        )
+    else:
+        header_right = f'<div class="badge">{_esc(badge)}</div>'
+
+    return f"""<!doctype html>
+<html><head><meta charset="utf-8"><style>
+  * {{ margin:0; padding:0; box-sizing:border-box; }}
+  html, body {{ width:{CANVAS_W}px; height:{CANVAS_H}px; overflow:hidden; }}
+  body {{
+    font-family:"Segoe UI", Arial, sans-serif; color:#f8fafc; background:{bg};
+    padding:44px 50px 30px 50px; display:flex; flex-direction:column; position:relative;
+  }}
+  {_FX_CSS}
+  .topbar, .board, .footer {{ position:relative; z-index:2; }}
+  .topbar {{ display:flex; justify-content:space-between; align-items:center; gap:24px; }}
+  .kicker {{ font-family:"Bahnschrift","Segoe UI",sans-serif; font-weight:600;
+    letter-spacing:4px; font-size:22px; color:{accent}; text-transform:uppercase; }}
+  .badge {{ font-family:"Bahnschrift",sans-serif; font-weight:700; font-size:26px;
+    color:#0a0f1f; background:{accent}; border-radius:10px; padding:6px 14px; letter-spacing:2px; }}
+  .hero {{ position:relative; flex:0 0 auto; width:150px; height:150px; }}
+  .hero::before {{ content:""; position:absolute; inset:-20px; border-radius:50%;
+    background:radial-gradient(circle at 50% 42%, var(--hero-accent), transparent 68%);
+    filter:blur(16px); opacity:0.6; z-index:0; }}
+  .hero .hshot {{ position:relative; z-index:1; width:150px; height:150px; border-radius:50%;
+    object-fit:cover; object-position:center 10%; background:#20242c; border:4px solid var(--hero-accent);
+    box-shadow:0 0 40px -4px var(--hero-accent), 0 20px 30px -12px rgba(0,0,0,0.85); }}
+  .hero .hlogo {{ position:absolute; z-index:2; left:-6px; bottom:2px; width:48px; height:48px;
+    object-fit:contain; filter:drop-shadow(0 3px 4px rgba(0,0,0,0.8)); }}
+  .hero .yrchip {{ position:absolute; z-index:2; right:-6px; top:2px;
+    font-family:"Bahnschrift",sans-serif; font-weight:700; font-size:18px; color:#0a0f1f;
+    background:{accent}; border-radius:8px; padding:3px 9px; letter-spacing:1px; }}
+  .title {{ font-family:"Bahnschrift Condensed","Bahnschrift","Arial Narrow",sans-serif;
+    font-weight:700; font-size:74px; line-height:0.9; text-transform:uppercase; letter-spacing:1px;
+    margin-top:6px; -webkit-text-stroke:1.5px rgba(0,0,0,0.38); paint-order:stroke fill;
+    text-shadow:0 1px 0 rgba(0,0,0,0.4), 0 3px 0 rgba(0,0,0,0.26), 0 5px 0 rgba(0,0,0,0.16), 0 10px 20px rgba(0,0,0,0.6); }}
+  .title .accent {{ color:{accent}; }}
+  .subtitle {{ color:#94a3b8; font-size:20px; margin-top:6px; text-shadow:0 1px 3px rgba(0,0,0,0.6); }}
+  .board {{ margin-top:16px; display:flex; flex-direction:column; gap:14px; flex:1; overflow:hidden; }}
+  .tier-block {{ display:flex; flex-direction:column; gap:6px; }}
+  .tier-head {{ display:flex; align-items:center; gap:12px; }}
+  .tier-label {{ font-family:"Bahnschrift",sans-serif; font-weight:700; font-size:20px;
+    color:var(--accent); letter-spacing:2px; text-transform:uppercase; white-space:nowrap; }}
+  .tier-line {{ flex:1; height:2px; background:linear-gradient(90deg, var(--accent), transparent); opacity:0.55; }}
+  .tier-count {{ font-family:"Bahnschrift",sans-serif; font-size:14px; color:#8896ad;
+    border:1px solid rgba(255,255,255,0.14); border-radius:8px; padding:2px 8px; }}
+  .tier-rows {{ display:flex; flex-direction:column; gap:6px; }}
+  .row {{ display:flex; align-items:center; gap:14px;
+    background:linear-gradient(90deg, var(--team) 0%, var(--team-fade) 34%, rgba(16,18,24,0.5) 60%, rgba(12,13,17,0.24) 100%);
+    border:1px solid rgba(255,255,255,0.07); border-left:5px solid var(--edge); border-radius:13px;
+    padding:8px 18px; min-height:0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -10px 16px -14px rgba(0,0,0,0.9),
+      0 10px 18px -12px rgba(0,0,0,0.85); }}
+  .rank {{ position:relative; flex:0 0 auto; width:{rk}px; height:{rk}px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Bahnschrift Condensed","Bahnschrift",sans-serif; font-weight:700; font-size:{rkf}px;
+    color:#e8edf5; background:rgba(255,255,255,0.06); border:2px solid rgba(255,255,255,0.16); }}
+  .rank.m1 {{ background:linear-gradient(145deg,#ffe9a8,#f0a91c); color:#3d2800; border:none;
+    box-shadow:0 0 18px -2px rgba(245,169,28,0.8); }}
+  .rank.m2 {{ background:linear-gradient(145deg,#f4f6f8,#aab2bd); color:#20262e; border:none; }}
+  .rank.m3 {{ background:linear-gradient(145deg,#f0b483,#a85a1e); color:#2a1400; border:none; }}
+  .delta {{ flex:0 0 auto; min-width:44px; text-align:center; font-family:"Bahnschrift",sans-serif;
+    font-weight:700; font-size:16px; padding:3px 6px; border-radius:7px; }}
+  .delta.up {{ color:#4ade80; background:rgba(34,197,94,0.16); border:1px solid rgba(34,197,94,0.5); }}
+  .delta.down {{ color:#f87171; background:rgba(239,68,68,0.16); border:1px solid rgba(239,68,68,0.5); }}
+  .delta.flat {{ color:#8f9db0; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); }}
+  .avatar {{ position:relative; flex:0 0 auto; width:{av}px; height:{av}px; }}
+  .avatar .shot {{ width:{av}px; height:{av}px; border-radius:50%; object-fit:cover; object-position:center 10%;
+    background:#20242c; border:2px solid var(--accent); box-shadow:0 0 12px -3px var(--accent); }}
+  .avatar .logo {{ position:absolute; right:-5px; bottom:-3px; width:{lg}px; height:{lg}px; object-fit:contain;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,0.7)); }}
+  .avatar.nophoto {{ display:flex; align-items:center; justify-content:center; }}
+  .avatar.nophoto .logo {{ position:static; width:{nolg}px; height:{nolg}px; }}
+  .meta {{ flex:1; min-width:0; }}
+  .name {{ font-size:24px; font-weight:700; letter-spacing:0.2px; line-height:1.05;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 2px 5px rgba(0,0,0,0.7); }}
+  .sub {{ font-size:13px; color:#c4cfde; margin-top:1px; letter-spacing:0.6px; line-height:1.1;
+    text-transform:uppercase; text-shadow:0 1px 3px rgba(0,0,0,0.7); }}
+  .statline {{ font-size:12px; color:{accent}; font-weight:600; margin-top:1px; }}
+  .stat {{ text-align:right; min-width:80px; flex:0 0 auto; }}
+  .stat-num {{ font-family:"Bahnschrift",sans-serif; font-weight:700; font-size:24px; color:#ffffff;
+    text-shadow:0 2px 8px rgba(0,0,0,0.5); }}
+  .stat-label {{ font-size:11px; color:#8896ad; letter-spacing:1.2px; text-transform:uppercase; }}
+  .footer {{ margin-top:14px; color:#64748b; font-size:15px; letter-spacing:0.5px;
+    display:flex; justify-content:space-between; }}
+</style></head>
+<body>
+  {_OVERLAYS}
+  <div class="topbar">
+    <div>
+      <div class="kicker">{_esc(kicker)}</div>
+      <div class="title">{title}</div>
+      {subtitle_html}
+    </div>
+    {header_right}
+  </div>
+  <div class="board">
+    {blocks_html}
+  </div>
+  <div class="footer"><span>{_esc(footer) if footer else ''}</span><span>data-driven \u00b7 our projections</span></div>
+</body></html>"""
+
+
+def _card_html(row: Dict) -> str:
+    team = row.get("team", "")
+    override = row.get("accent")
+    primary, secondary = team_color(team), team_secondary(team)
+    vibrant, other = (secondary, primary) if _chroma(secondary) > _chroma(primary) else (primary, secondary)
+    accent = override or vibrant
+    logo = team_logo_url(team) if team else ""
+    photo = row.get("photo", "")
+    if photo:
+        img_html = f'<img class="cphoto" src="{photo}" alt="">'
+        logo_badge = f'<img class="clogo" src="{logo}" alt="">' if logo else ""
+    else:
+        img_html = f'<div class="cphoto nophoto"><img class="cbiglogo" src="{logo}" alt=""></div>' if logo else '<div class="cphoto nophoto"></div>'
+        logo_badge = ""
+    stat_num = row.get("stat_num", "")
+    stat_label = row.get("stat_label", "")
+    stat_html = ""
+    if stat_num != "":
+        stat_html = (f'<div class="cstat"><span class="cstat-num">{_esc(stat_num)}</span>'
+                     f'<span class="cstat-label">{_esc(stat_label)}</span></div>')
+    return f"""
+      <div class="card" style="--accent:{accent}">
+        <div class="crank">{_esc(row.get('rank', ''))}</div>
+        <div class="cphoto-wrap">{img_html}{logo_badge}</div>
+        <div class="cname">{_esc(row.get('name', ''))}</div>
+        <div class="csub">{_esc(row.get('sub', ''))}</div>
+        {stat_html}
+      </div>"""
+
+
+def card_grid_poster(
+    title: str,
+    rows: List[Dict],
+    columns: int = 2,
+    kicker: str = "2026 REDRAFT \u00b7 HALF-PPR",
+    subtitle: str = "",
+    accent: str = BRAND_ACCENT,
+    footer: str = "",
+    badge: str = "2026",
+    background: Optional[str] = None,
+) -> str:
+    """A grid of player "cards" instead of stacked rows -- bigger photos, more
+    visual weight per player. Best for shorter lists (6-10 players); a 2D grid
+    silhouette reads completely differently from ranking_poster's vertical list
+    or tier_board_poster's grouped blocks."""
+    cards_html = "\n".join(_card_html(r) for r in rows)
+    subtitle_html = f'<div class="subtitle">{_esc(subtitle)}</div>' if subtitle else ""
+    bg = background or _BG.format(accent=accent)
+
+    return f"""<!doctype html>
+<html><head><meta charset="utf-8"><style>
+  * {{ margin:0; padding:0; box-sizing:border-box; }}
+  html, body {{ width:{CANVAS_W}px; height:{CANVAS_H}px; overflow:hidden; }}
+  body {{ font-family:"Segoe UI", Arial, sans-serif; color:#f8fafc; background:{bg};
+    padding:44px 50px 34px 50px; display:flex; flex-direction:column; position:relative; }}
+  {_FX_CSS}
+  .topbar, .grid, .footer {{ position:relative; z-index:2; }}
+  .topbar {{ display:flex; justify-content:space-between; align-items:center; gap:24px; }}
+  .kicker {{ font-family:"Bahnschrift","Segoe UI",sans-serif; font-weight:600;
+    letter-spacing:4px; font-size:22px; color:{accent}; text-transform:uppercase; }}
+  .badge {{ font-family:"Bahnschrift",sans-serif; font-weight:700; font-size:26px; color:#0a0f1f;
+    background:{accent}; border-radius:10px; padding:6px 14px; letter-spacing:2px; }}
+  .title {{ font-family:"Bahnschrift Condensed","Bahnschrift","Arial Narrow",sans-serif;
+    font-weight:700; font-size:78px; line-height:0.9; text-transform:uppercase; letter-spacing:1px;
+    margin-top:6px; -webkit-text-stroke:1.5px rgba(0,0,0,0.38); paint-order:stroke fill;
+    text-shadow:0 1px 0 rgba(0,0,0,0.4), 0 3px 0 rgba(0,0,0,0.26), 0 5px 0 rgba(0,0,0,0.16), 0 10px 20px rgba(0,0,0,0.6); }}
+  .title .accent {{ color:{accent}; }}
+  .subtitle {{ color:#94a3b8; font-size:20px; margin-top:6px; text-shadow:0 1px 3px rgba(0,0,0,0.6); }}
+  .grid {{ margin-top:22px; flex:1; display:grid; grid-template-columns:repeat({columns}, 1fr);
+    gap:18px; align-content:center; }}
+  .card {{ position:relative; display:flex; flex-direction:column; align-items:center; text-align:center;
+    background:linear-gradient(160deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+    border:1px solid rgba(255,255,255,0.08); border-top:5px solid var(--accent); border-radius:20px;
+    padding:22px 16px 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 30px -16px rgba(0,0,0,0.9); }}
+  .crank {{ position:absolute; top:12px; left:14px; font-family:"Bahnschrift Condensed","Bahnschrift",sans-serif;
+    font-weight:700; font-size:22px; color:var(--accent); }}
+  .cphoto-wrap {{ position:relative; width:132px; height:132px; margin-top:6px; }}
+  .cphoto {{ width:132px; height:132px; border-radius:18px; object-fit:cover; object-position:center 10%;
+    background:#20242c; border:3px solid var(--accent);
+    box-shadow:0 0 20px -4px var(--accent), 0 12px 20px -10px rgba(0,0,0,0.85); }}
+  .cphoto.nophoto {{ display:flex; align-items:center; justify-content:center; }}
+  .cbiglogo {{ width:88px; height:88px; object-fit:contain; }}
+  .clogo {{ position:absolute; right:-8px; bottom:-8px; width:44px; height:44px; object-fit:contain;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }}
+  .cname {{ font-size:24px; font-weight:700; margin-top:12px; line-height:1.05;
+    text-shadow:0 2px 5px rgba(0,0,0,0.7); }}
+  .csub {{ font-size:13px; color:#c4cfde; margin-top:3px; letter-spacing:0.8px; text-transform:uppercase; }}
+  .cstat {{ margin-top:10px; display:flex; flex-direction:column; align-items:center; }}
+  .cstat-num {{ font-family:"Bahnschrift",sans-serif; font-weight:700; font-size:30px; color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,0.5); }}
+  .cstat-label {{ font-size:11px; color:#8896ad; letter-spacing:1.4px; text-transform:uppercase; }}
+  .footer {{ margin-top:18px; color:#64748b; font-size:15px; display:flex; justify-content:space-between; }}
+</style></head>
+<body>
+  {_OVERLAYS}
+  <div class="topbar">
+    <div>
+      <div class="kicker">{_esc(kicker)}</div>
+      <div class="title">{title}</div>
+      {subtitle_html}
+    </div>
+    <div class="badge">{_esc(badge)}</div>
+  </div>
+  <div class="grid">
+    {cards_html}
+  </div>
+  <div class="footer"><span>{_esc(footer) if footer else ''}</span><span>data-driven \u00b7 our projections</span></div>
+</body></html>"""
