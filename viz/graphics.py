@@ -20,6 +20,18 @@ from viz.teams import team_color, team_secondary, team_logo_url
 CANVAS_W = 1080
 CANVAS_H = 1350
 
+# Tier board layout sizing (pixels)
+HEADER_HEIGHT = 250
+FOOTER_HEIGHT = 40
+BOARD_MARGIN = 30
+
+BOARD_MAX_HEIGHT = CANVAS_H - HEADER_HEIGHT - FOOTER_HEIGHT - BOARD_MARGIN
+
+ROW_HEIGHT = 82
+ROW_GAP = 6
+TIER_HEADER_HEIGHT = 34
+TIER_BLOCK_GAP = 10
+
 # --- Shared "premium" finishing effects (grain + vignette) ------------------
 # Two pointer-inert, full-canvas overlays every poster drops in for depth:
 #   * a faint film grain (SVG fractal noise) kills the flat digital look;
@@ -795,6 +807,47 @@ def _tier_header_html(label: str, accent: str, count: int) -> str:
     )
 
 
+def _fit_tiers_to_height(tiers):
+    """Return a copy of tiers that fits within the board height."""
+
+    fitted = []
+    used = 0
+
+    for tier in tiers:
+        new_rows = []
+
+        # Account for tier header
+        needed = TIER_HEADER_HEIGHT
+        if fitted:
+            needed += TIER_BLOCK_GAP
+
+        if used + needed > BOARD_MAX_HEIGHT:
+            break
+
+        used += needed
+
+        for row in tier["rows"]:
+            row_height = ROW_HEIGHT
+            if new_rows:
+                row_height += ROW_GAP
+
+            if used + row_height > BOARD_MAX_HEIGHT:
+                break
+
+            new_rows.append(row)
+            used += row_height
+
+        if new_rows:
+            fitted.append({
+                "label": tier["label"],
+                "rows": new_rows,
+            })
+
+        if len(new_rows) < len(tier["rows"]):
+            break
+
+    return fitted
+
 def tier_board_poster(
     title: str,
     tiers: List[Dict],
@@ -814,13 +867,24 @@ def tier_board_poster(
     eye processes it in chunks (matches how analysts actually talk about
     rankings -- "he's a Tier 2 RB") rather than scanning one long list.
     """
-    total_rows = sum(len(t["rows"]) for t in tiers)
+
+    # Count rows before fitting
+    original_rows = sum(len(t["rows"]) for t in tiers)
+
+    # Remove rows that won't fit on the canvas
+    tiers = _fit_tiers_to_height(tiers)
+
+    # Count rows after fitting
+    visible_rows = sum(len(t["rows"]) for t in tiers)
+
+    # Existing sizing logic now uses only visible rows
+    total_rows = visible_rows
+
     av = 68 if total_rows <= 10 else (58 if total_rows <= 14 else 48)
     rk = round(av * 0.7)
     lg = round(av * 0.46)
     nolg = round(av * 0.72)
     rkf = round(rk * 0.5)
-
     blocks = []
     for tier in tiers:
         rows_html = "".join(_row_html(r) for r in tier["rows"])
