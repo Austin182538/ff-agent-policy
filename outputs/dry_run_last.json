@@ -1,0 +1,30 @@
+{
+  "chosen_slot": "value_carousel",
+  "subjects": [
+    "Jadarian Price",
+    "David Montgomery",
+    "Matthew Stafford",
+    "Courtland Sutton",
+    "Jared Goff"
+  ],
+  "params": {
+    "top": 5
+  },
+  "reasoning": "The value_carousel is the richer multi-slide format over the plain value slot and delivers five compelling market-inefficiency steals \u2014 highlighted by Price over Love (6-win gap, 41 ADP rounds cheaper) and Montgomery over Achane (5-win gap, 45 rounds cheaper) \u2014 which makes for a highly engaging, data-driven post. Recent history only shows a head-to-head compare, so a carousel pivot adds clear variety.",
+  "priority": "normal",
+  "graphic": {
+    "image_paths": [
+      "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\value_targets_top5_20260731T165502.png",
+      "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jadarianprice_jeremiyahlove_20260731T165502.png",
+      "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_davidmontgomery_devonachane_20260731T165502.png",
+      "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_matthewstafford_jaydendaniels_20260731T165502.png",
+      "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_courtlandsutton_garrettwilson_20260731T165502.png",
+      "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jaredgoff_jaydendaniels_20260731T165502.png"
+    ],
+    "image_path": "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\value_targets_top5_20260731T165502.png",
+    "theme": "crimson",
+    "variant": "classic",
+    "layout": "carousel"
+  },
+  "caption": "Four names people are sleeping on while everyone races to draft the same five guys.\n\nJadarian Price (SEA) projects to 147 points, just 12.5 behind Jeremiyah Love, yet he's coming off the board 41 picks later. David Montgomery lands in Houston and projects to 162 points, within 7.5 of De'Von Achane, while sitting 45 spots deeper in ADP. At QB, both Stafford and Goff project within 1.5 points of Jayden Daniels (281.6 and 280.3 vs. 281.5) but cost you roughly 49 and 54 picks less, respectively. And Courtland Sutton in Denver projects to 148 points, 48 ADP spots behind Garrett Wilson for a gap that just doesn't hold up on paper.\n\nThe argument isn't \"these players are better.\" It's that the market is pricing in name recognition and hype in ways our model isn't seeing in the projections. When the gap between two players' expected output is a rounding error but the draft cost is 40-plus picks, that's roster construction equity you can spend somewhere else.\n\nSwipe through for the head-to-head breakdowns on each one. Which of these value plays would you actually pull the trigger on?\n\n#FantasyFootball #NFL #FantasyFootballAdvice #FFB #DynastyFootball #RedraftFantasy #FantasyFootball2026 #JadarianPrice #DavidMontgomery #MatthewStafford #GridironGang #FantasyFootballCommunity"
+}

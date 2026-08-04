@@ -55,9 +55,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 
 from viz.graphics import (
-    ranking_poster, value_targets_poster, comparison_poster,
-    tier_board_poster, card_grid_poster, _bucket_tiers,
-    resolve_theme, resolve_variant, BRAND_ACCENT,
+    ranking_poster, value_targets_poster, comparison_poster, comparison_scoreboard_poster,
+    comparison_slate_poster, comparison_stack_poster, tier_board_poster, card_grid_poster,
+    _bucket_tiers, resolve_theme, resolve_variant, BRAND_ACCENT,
 )
 from viz.render import html_to_png
 
@@ -91,6 +91,20 @@ def load_headshots() -> dict:
     return out
 
 
+def photo_for(shots: dict, key: str) -> str:
+    """
+    Look up a player's headshot URL and hand back a cleaned, halo-free cutout
+    of it (see viz/headshot_cache.py) instead of the raw FantasyPros URL.
+    Falls back to the raw URL, or "", if cleanup isn't available -- this never
+    raises and never blocks a render on a single bad/uncleanable photo.
+    """
+    url = shots.get(key, "")
+    if not url:
+        return url
+    from viz.headshot_cache import get_clean_headshot
+    return get_clean_headshot(url)
+
+
 def load_sleeper_adp() -> dict:
     if not os.path.exists(SLEEPER_ADP_CSV):
         return {}
@@ -113,6 +127,49 @@ def _rank_class(rank: int) -> str:
 
 RISER_ACCENT = "#22c55e"
 FALLER_ACCENT = "#ef4444"
+
+# --- Team Points Available (value_carousel "value_upside" metric) ----------
+# The naive version of this summed our OWN modeled roster's projected_ppr_points
+# per team -- but that's incomplete (only players we've modeled) and doesn't
+# reliably track team quality (a team can look "bigger" than a better team
+# just because we happen to have more of its bench modeled). Instead, derive
+# it the way the user asked: map real team points scored -> historical team
+# fantasy output, then apply that to each team's 2026 PROJECTED real points.
+#
+# 1) TEAM_POINTS_FOR_INTERCEPT/PER_WIN: win-total -> projected real points_for,
+#    fit on 2021-2025 season_final_records (points_for ~= 228.9 + 18.1*wins,
+#    R^2 0.63) -- same historical fit already used for TEAM_POINTS_PER_WIN in
+#    analysis/player_ranking_v1.py, just also keeping the intercept here since
+#    we need an absolute points_for estimate, not only a relative one.
+# 2) TEAM_FANTASY_PTS_PER_REAL_POINT: total half-PPR fantasy points produced by
+#    a team's QB/RB/WR/TE room, per real point that team scored -- fit
+#    directly against nfl_analytics.db (historical_player_stats summed per
+#    team-season 2021-2025, joined to season_final_records.points_for),
+#    through-origin regression slope = 3.21 (simple per-team-season ratio mean
+#    was 3.29, std 0.31 -- the two agree closely, through-origin preferred so
+#    a couple of very-low-points-for outlier teams don't swing a simple mean).
+TEAM_POINTS_FOR_INTERCEPT = 228.9
+TEAM_POINTS_FOR_PER_WIN = 18.1
+TEAM_FANTASY_PTS_PER_REAL_POINT = 3.21
+
+
+# "Best case" upside share of the team's total available fantasy pts, by
+# position -- RB/WR get the bigger 8.7% swing (a lead back or WR1 can
+# plausibly absorb a larger slice of the team's point pool if touches/targets
+# concentrate their way), TE a smaller 7.4%, QB the smallest at 5.6% (one
+# passer's ceiling is capped by the pass-game share of the whole point pool).
+UPSIDE_SWING_PCT_BY_POSITION = {"QB": 0.056, "RB": 0.087, "WR": 0.087, "TE": 0.074}
+UPSIDE_SWING_PCT_DEFAULT = 0.10
+
+
+def team_pts_available_from_wins(team_win_total):
+    """2026 projected total fantasy points available to a team's skill-position
+    room, derived from its Vegas win total via the historical win->points_for
+    ->fantasy_points chain above. Returns None if we don't have a win total."""
+    if team_win_total is None or pd.isna(team_win_total):
+        return None
+    projected_points_for = TEAM_POINTS_FOR_INTERCEPT + TEAM_POINTS_FOR_PER_WIN * float(team_win_total)
+    return projected_points_for * TEAM_FANTASY_PTS_PER_REAL_POINT
 
 TODAY = datetime.now().strftime("%b %d, %Y")
 
@@ -223,7 +280,7 @@ def build_position(df, position, top, start=1, accent=BRAND_ACCENT, background=N
             "rank_class": _rank_class(rank),
             "name": r["player_name"],
             "team": r["team_abbr"],
-            "photo": shots.get(_norm(r["player_name"]), ""),
+            "photo": photo_for(shots, _norm(r["player_name"])),
             "sub": f"{r['team_abbr']} \u00b7 #{int(r['our_rank'])} overall{adp}",
             "statline": format_stat_line(r),
             "stat_num": f"{r['projected_ppr_points']:.0f}",
@@ -258,7 +315,7 @@ def build_overall(df, top, start=1, accent=BRAND_ACCENT, background=None,
             "rank_class": _rank_class(rank),
             "name": r["player_name"],
             "team": r["team_abbr"],
-            "photo": shots.get(_norm(r["player_name"]), ""),
+            "photo": photo_for(shots, _norm(r["player_name"])),
             "sub": f"{r['position']} \u00b7 {r['team_abbr']}{adp}",
             "statline": format_stat_line(r),
             "stat_num": f"{r['vor']:.0f}",
@@ -318,7 +375,7 @@ def build_hypothetical_movers(df, mover, to_rank, from_rank=0, start=13, top=12,
             "rank_class": _rank_class(rank),
             "name": r["player_name"],
             "team": r["team_abbr"],
-            "photo": shots.get(_norm(r["player_name"]), ""),
+            "photo": photo_for(shots, _norm(r["player_name"])),
             "sub": f"{r['position']} \u00b7 {r['team_abbr']}{adp}{was}",
             "statline": format_stat_line(r),
             "stat_num": f"{r['vor']:.0f}",
@@ -332,7 +389,7 @@ def build_hypothetical_movers(df, mover, to_rank, from_rank=0, start=13, top=12,
         kicker="HYPOTHETICAL \u00b7 HEADLINE IMPACT",
         subtitle=f"If {mv['player_name']} slides to #{to_rank} \u2014 who moves",
         footer=f"Simulated {TODAY}",
-        hero_photo=shots.get(_norm(mv["player_name"])) or None, hero_team=mv["team_abbr"],
+        hero_photo=photo_for(shots, _norm(mv["player_name"])) or None, hero_team=mv["team_abbr"],
     ), _timestamped_path(f"hypothetical_{_norm(mv['player_name']).replace(' ','')}_{to_rank}_{start}-{end}")
 
 
@@ -360,7 +417,7 @@ def build_favorites(df, top, accent=BRAND_ACCENT, background=None, variant="clas
             "rank_class": _rank_class(i + 1),
             "name": r["player_name"],
             "team": r["team_abbr"],
-            "photo": shots.get(_norm(r["player_name"]), ""),
+            "photo": photo_for(shots, _norm(r["player_name"])),
             "sub": f"{r['position']} \u00b7 {r['team_abbr']} \u00b7 OURS #{int(r['our_rank'])} \u00b7 ADP {round(a['adp'])}",
             "statline": format_stat_line(r),
             "stat_num": f"+{gap}",
@@ -375,7 +432,32 @@ def build_favorites(df, top, accent=BRAND_ACCENT, background=None, variant="clas
     )
 
 
-def build_compare(df, players, accent=BRAND_ACCENT, background=None):
+_SAME_POS_STAT_SPECS = {
+    "QB": [
+        ("Pass Yards", "proj_pass_yards", lambda v: f"{v:,.0f}", False),
+        ("Pass TD", "proj_pass_tds", lambda v: f"{v:.0f}", False),
+        ("Rush Yards", "proj_rush_yards", lambda v: f"{v:,.0f}", False),
+    ],
+    "RB": [
+        ("Rush Yards", "proj_rush_yards", lambda v: f"{v:,.0f}", False),
+        ("Total TD", "_total_td", lambda v: f"{v:.0f}", False),
+        ("Receptions", "proj_receptions", lambda v: f"{v:.0f}", False),
+    ],
+    "WR": [
+        ("Rec Yards", "proj_rec_yards", lambda v: f"{v:,.0f}", False),
+        ("Receptions", "proj_receptions", lambda v: f"{v:.0f}", False),
+        ("Rec TD", "proj_rec_tds", lambda v: f"{v:.0f}", False),
+    ],
+    "TE": [
+        ("Rec Yards", "proj_rec_yards", lambda v: f"{v:,.0f}", False),
+        ("Receptions", "proj_receptions", lambda v: f"{v:.0f}", False),
+        ("Rec TD", "proj_rec_tds", lambda v: f"{v:.0f}", False),
+    ],
+}
+
+
+def build_compare(df, players, accent=BRAND_ACCENT, background=None, style="scoreboard", seed=None,
+                  kicker=None, subtitle=None, badge_override=None, metrics_mode="standard"):
     adps = load_sleeper_adp()
     shots = load_headshots()
     by_key = df.drop_duplicates("player_name").set_index(df["player_name"].apply(_norm))
@@ -390,25 +472,57 @@ def build_compare(df, players, accent=BRAND_ACCENT, background=None):
     if len(names) != 2:
         raise SystemExit('--players needs exactly two names, e.g. --players "Derrick Henry, Josh Jacobs"')
 
+    stat_cols = ["proj_pass_yards", "proj_pass_tds", "proj_rush_yards", "proj_rush_tds",
+                 "proj_rec_yards", "proj_rec_tds", "proj_receptions"]
+
     def resolve(nm):
         k = _norm(nm)
         if k not in by_key.index:
             raise SystemExit(f"'{nm}' not found in the rankings CSV.")
         r = by_key.loc[k]
         a = adps.get(k)
-        return {
+        team_wins = float(r["team_win_total"]) if "team_win_total" in r.index and pd.notna(r.get("team_win_total")) else None
+        team_pts = team_pts_available_from_wins(team_wins)
+        out = {
             "name": r["player_name"], "team": r["team_abbr"], "position": r["position"],
-            "photo": shots.get(k, ""),
+            "photo": photo_for(shots, k),
             "our_rank": int(r["our_rank"]), "pos_rank": posrank.get(k),
             "proj": float(r["projected_ppr_points"]), "vor": float(r["vor"]),
             "adp": a["adp"] if a else None,
+            "team_wins": team_wins,
+            "team_pts_available": team_pts,
+            # "Best case" upside: what if this position's typical share of
+            # the team's TOTAL projected fantasy production landed on this
+            # one player -- a simple, transparent upside-swing number, not a
+            # fabricated stat. Share varies by position (see
+            # UPSIDE_SWING_PCT_BY_POSITION).
+            "upside_swing": team_pts * UPSIDE_SWING_PCT_BY_POSITION.get(r["position"], UPSIDE_SWING_PCT_DEFAULT)
+                            if team_pts is not None else None,
         }
+        for col in stat_cols:
+            val = r.get(col)
+            out[col] = float(val) if col in r.index and pd.notna(val) else None
+        rush_td, rec_td = out.get("proj_rush_tds"), out.get("proj_rec_tds")
+        out["_total_td"] = ((rush_td or 0) + (rec_td or 0)) if (rush_td is not None or rec_td is not None) else None
+        return out
 
     L, R = resolve(names[0]), resolve(names[1])
-    left = {"name": L["name"], "team": L["team"], "photo": L["photo"],
-            "sub": f"{L['position']} \u00b7 {L['team']}"}
-    right = {"name": R["name"], "team": R["team"], "photo": R["photo"],
-             "sub": f"{R['position']} \u00b7 {R['team']}"}
+    if metrics_mode == "value_upside":
+        # Surface ADP right under the name/position/team line -- with no
+        # Pos Rank/Our Rank row on this card anymore, ADP needed a home, and
+        # it's the number that explains WHY we're excited (going way later
+        # than the situation/upside case below justifies).
+        l_adp = f" \u00b7 ADP {L['adp']:g}" if L["adp"] is not None else ""
+        r_adp = f" \u00b7 ADP {R['adp']:g}" if R["adp"] is not None else ""
+        left = {"name": L["name"], "team": L["team"], "photo": L["photo"],
+                "sub": f"{L['position']} \u00b7 {L['team']}{l_adp}"}
+        right = {"name": R["name"], "team": R["team"], "photo": R["photo"],
+                 "sub": f"{R['position']} \u00b7 {R['team']}{r_adp}"}
+    else:
+        left = {"name": L["name"], "team": L["team"], "photo": L["photo"],
+                "sub": f"{L['position']} \u00b7 {L['team']}"}
+        right = {"name": R["name"], "team": R["team"], "photo": R["photo"],
+                 "sub": f"{R['position']} \u00b7 {R['team']}"}
 
     def cmp_row(label, lval, rval, fmt, lower_wins):
         ls = fmt(lval) if lval is not None else "\u2014"
@@ -417,25 +531,106 @@ def build_compare(df, players, accent=BRAND_ACCENT, background=None):
         if lval is not None and rval is not None and lval != rval:
             better_left = (lval < rval) if lower_wins else (lval > rval)
             win = "L" if better_left else "R"
-        return {"label": label, "left": ls, "right": rs, "win": win}
+        # left_val/right_val/lower_is_better feed the faint sideways bar
+        # chart in comparison_scoreboard_poster -- ADP and Pos Rank are
+        # lower-is-better, everything else (yards, TD, receptions, proj
+        # pts, VOR) is higher-is-better.
+        return {"label": label, "left": ls, "right": rs, "win": win,
+                "left_val": lval, "right_val": rval, "lower_is_better": lower_wins}
 
-    metrics = [
-        cmp_row("Our Rank", L["our_rank"], R["our_rank"], lambda v: f"#{int(v)}", True),
-        cmp_row("Pos Rank", L["pos_rank"], R["pos_rank"],
-                lambda v: f"{L['position'] if v==L['pos_rank'] else R['position']}{int(v)}", True)
-        if L["position"] == R["position"] else
-        {"label": "Pos Rank", "left": f"{L['position']}{L['pos_rank']}",
-         "right": f"{R['position']}{R['pos_rank']}", "win": ""},
-        cmp_row("Sleeper ADP", L["adp"], R["adp"], lambda v: f"{v:g}", True),
-        cmp_row("Proj Pts", L["proj"], R["proj"], lambda v: f"{v:.0f}", False),
-        cmp_row("VOR", L["vor"], R["vor"], lambda v: f"{v:.0f}", False),
-    ]
-    badge = f"{L['position']} DUEL" if L["position"] == R["position"] else f"{L['position']} vs {R['position']}"
-    return comparison_poster(
-        left=left, right=right, metrics=metrics, accent=accent, background=background,
-        subtitle="Our board vs the consensus draft slot", badge=badge,
-        footer=f"Generated {TODAY}",
-    ), _timestamped_path(f"compare_{_norm(L['name']).replace(' ','')}_{_norm(R['name']).replace(' ','')}")
+    same_position = L["position"] == R["position"]
+    if metrics_mode == "value_upside":
+        # For value_carousel slides: don't repeat the standard compare card's
+        # rank/ADP/VOR layout (the user's ask -- this needs to read
+        # differently from a neutral head-to-head). Team Win Total is the
+        # actual "better team" signal; Proj Pts shows comparable/more
+        # expected scoring despite the market gap; Team Pts Available is the
+        # whole roster's modeled production pool (a bigger pool -> more
+        # room to outperform); Upside Swing is what THIS PLAYER'S POSITION's
+        # typical share of that team pool (see UPSIDE_SWING_PCT_BY_POSITION --
+        # QB 20%, RB/WR 15%, TE 10%) landing on them would look like -- the
+        # "best case" number. ADP moved up into the name/team sub-line (see
+        # left/right above) since there's no rank row left to carry it here.
+        metrics = [
+            cmp_row("Team Win Total", L["team_wins"], R["team_wins"], lambda v: f"{v:g}", False),
+            cmp_row("Proj Pts", L["proj"], R["proj"], lambda v: f"{v:.0f}", False),
+            cmp_row("Team Pts Available", L["team_pts_available"], R["team_pts_available"],
+                    lambda v: f"{v:,.0f}", False),
+            cmp_row("Upside Swing", L["upside_swing"], R["upside_swing"], lambda v: f"+{v:.0f}", False),
+        ]
+    elif same_position and L["position"] in _SAME_POS_STAT_SPECS:
+        major_stats = [cmp_row(label, L.get(col), R.get(col), fmt, lower_wins)
+                       for label, col, fmt, lower_wins in _SAME_POS_STAT_SPECS[L["position"]]]
+        metrics = major_stats + [
+            cmp_row("Pos Rank", L["pos_rank"], R["pos_rank"],
+                    lambda v: f"{L['position'] if v==L['pos_rank'] else R['position']}{int(v)}", True),
+            cmp_row("Sleeper ADP", L["adp"], R["adp"], lambda v: f"{v:g}", True),
+            cmp_row("Proj Pts", L["proj"], R["proj"], lambda v: f"{v:.0f}", False),
+        ]
+    else:
+        metrics = [
+            cmp_row("Pos Rank", L["pos_rank"], R["pos_rank"],
+                    lambda v: f"{L['position'] if v==L['pos_rank'] else R['position']}{int(v)}", True)
+            if same_position else
+            {"label": "Pos Rank", "left": f"{L['position']}{L['pos_rank']}",
+             "right": f"{R['position']}{R['pos_rank']}", "win": ""},
+            cmp_row("Our Rank", L["our_rank"], R["our_rank"], lambda v: f"#{int(v)}", True),
+            cmp_row("Sleeper ADP", L["adp"], R["adp"], lambda v: f"{v:g}", True),
+            cmp_row("Proj Pts", L["proj"], R["proj"], lambda v: f"{v:.0f}", False),
+            cmp_row("VOR", L["vor"], R["vor"], lambda v: f"{v:.0f}", False),
+        ]
+    # Projected yardage lands on round multiples of 5/10 for a lot of players,
+    # which looks obviously modeled. Nudge the DISPLAYED yards by a
+    # deterministic +/-1-3 (seeded per player+value, so it's stable across
+    # renders and each side differs) while leaving left_val/right_val -- which
+    # drive the bar length and win arrow -- on the true numbers.
+    def _deround_yards_disp(v, who):
+        off = (-3, -2, -1, 1, 2, 3)[int(hashlib.md5(f"{who}|yd|{round(v)}".encode()).hexdigest(), 16) % 6]
+        n = round(v) + off
+        if n % 5 == 0:
+            n += 1
+        return f"{n:,}"
+
+    for _m in metrics:
+        if str(_m.get("label", "")).endswith("Yards"):
+            if _m.get("left_val") is not None:
+                _m["left"] = _deround_yards_disp(_m["left_val"], L["name"])
+            if _m.get("right_val") is not None:
+                _m["right"] = _deround_yards_disp(_m["right_val"], R["name"])
+
+    badge = badge_override or (f"{L['position']} DUEL" if same_position else f"{L['position']} vs {R['position']}")
+    out_path = _timestamped_path(f"compare_{_norm(L['name']).replace(' ','')}_{_norm(R['name']).replace(' ','')}")
+    if style == "arena":
+        return comparison_poster(
+            left=left, right=right, metrics=metrics, accent=accent, background=background,
+            subtitle=subtitle or "Our board vs the consensus draft slot", badge=badge,
+            footer=f"Generated {TODAY}", seed=seed,
+        ), out_path
+    # value_upside cards always highlight the LEFT player (the one we're
+    # recommending -- names[0] is always the value_player, see
+    # build_value_carousel) as the "winner" for fire/crown purposes,
+    # regardless of how the metric rows tally -- the vs_player can legitimately
+    # win a row or two (e.g. more team wins right now) without that making
+    # them the hero of a card that exists to sell the OTHER guy.
+    force_winner = "L" if metrics_mode == "value_upside" else None
+    if style == "slate":
+        return comparison_slate_poster(
+            left=left, right=right, metrics=metrics, accent=accent,
+            kicker=kicker or "2026 REDRAFT · PLAYER COMPARISON", subtitle=subtitle or "", badge=badge, seed=seed,
+            force_winner=force_winner, vivid_bg=(metrics_mode == "value_upside"),
+        ), out_path
+    if style in ("stack", "stack_light"):
+        return comparison_stack_poster(
+            left=left, right=right, metrics=metrics, accent=accent,
+            kicker=kicker or "2026 REDRAFT · PLAYER COMPARISON", subtitle=subtitle or "", badge=badge, seed=seed,
+            force_winner=force_winner, vivid_bg=(metrics_mode == "value_upside"),
+            light=(style == "stack_light"),
+        ), out_path
+    return comparison_scoreboard_poster(
+        left=left, right=right, metrics=metrics, accent=accent,
+        kicker=kicker or "2026 REDRAFT · PLAYER COMPARISON", subtitle=subtitle or "", badge=badge, seed=seed,
+        force_winner=force_winner, vivid_bg=(metrics_mode == "value_upside"),
+    ), out_path
 
 
 def build_movers(direction, top):
@@ -465,7 +660,7 @@ def build_movers(direction, top):
             "rank": arrow,
             "name": r["player_name"],
             "team": r.get("team_abbr", ""),
-            "photo": shots.get(_norm(r["player_name"]), ""),
+            "photo": photo_for(shots, _norm(r["player_name"])),
             "sub": f"{r.get('position','')} \u00b7 #{int(r['our_rank_old'])} \u2192 #{int(r['our_rank_new'])} ({rank_change:+d})",
             "stat_num": f"{r['vor_change']:+.1f}",
             "stat_label": "VOR \u0394",
@@ -479,7 +674,7 @@ def build_movers(direction, top):
     ), _timestamped_path(f"movers_{direction}")
 
 
-def build_value(top):
+def build_value(top, accent=BRAND_ACCENT, background=None, seed=None):
     if not os.path.exists(GAPS_CSV):
         raise SystemExit(
             f"{GAPS_CSV} not found. Run analysis/market_gaps.py first "
@@ -488,30 +683,73 @@ def build_value(top):
     gaps = pd.read_csv(GAPS_CSV)
     if gaps.empty:
         raise SystemExit("No market gaps in the CSV -- loosen thresholds in market_gaps.py.")
+    shots = load_headshots()
     ranks = pd.read_csv(RANKINGS_CSV).drop_duplicates("player_name").set_index("player_name")
     sel = gaps.head(top)
     rows = []
-    for _, r in sel.iterrows():
+    for i, r in sel.iterrows():
         statline = ""
         if r["value_player"] in ranks.index:
             statline = format_stat_line(ranks.loc[r["value_player"]])
         rows.append({
-            "value_name": r["value_player"],
-            "value_team": r["value_team"],
-            "value_sub": f"{r['position']} \u00b7 {r['value_team']} \u00b7 {r['value_proj']:.0f} proj pts",
+            "rank": i + 1,
+            "name": r["value_player"],
+            "team": r["value_team"],
+            "position": r["position"],
+            "photo": photo_for(shots, _norm(r["value_player"])),
+            "overall_rank": int(r["value_our_rank"]) if pd.notna(r.get("value_our_rank")) else None,
+            "proj_pts": float(r["value_proj"]),
+            "win_gap": float(r["win_gap"]),
+            "adp_gap": float(r["adp_gap"]),
+            "score": float(r["score"]) if pd.notna(r.get("score")) else None,
+            "vs_player": r["vs_player"],
             "statline": statline,
-            "vs_text": f"{r['vs_player']} ({r['vs_team']}, {r['vs_proj']:.0f} pts)",
-            "win_badge": f"+{r['win_gap']:.0f} WINS",
-            "adp_badge": f"{r['adp_gap']:.0f} PICKS \u2193",
         })
-    return value_targets_poster(rows=rows, footer=f"Generated {TODAY}"), _timestamped_path(f"value_targets_top{top}")
+    return value_targets_poster(
+        rows=rows, accent=accent, background=background, seed=seed,
+    ), _timestamped_path(f"value_targets_top{top}")
+
+
+def build_value_carousel(df, top=5, accent=BRAND_ACCENT, background=None, seed=None):
+    """A multi-slide Instagram carousel: slide 1 is the value_targets_poster
+    summary (all `top` steals at a glance), slides 2..top+1 are individual
+    scoreboard comparison cards, one per steal vs the player we're passing on
+    them for -- reusing build_compare's structure/layout (photos, bars, the
+    whole scoreboard look) but with metrics_mode="value_upside" swapping in a
+    different stat set than the standalone --type compare card uses, so these
+    don't just look like a generic head-to-head: Team Win Total (the actual
+    "better team" signal), Proj Pts (comparable or better expected scoring),
+    VOR as a floor/consistency proxy, and Sleeper ADP last for the "and going
+    way later" punchline. Returns a list of (html, out_path) tuples."""
+    if not os.path.exists(GAPS_CSV):
+        raise SystemExit(
+            f"{GAPS_CSV} not found. Run analysis/market_gaps.py first "
+            "(it writes the market-gaps CSV this graphic is built from)."
+        )
+    gaps = pd.read_csv(GAPS_CSV)
+    if gaps.empty:
+        raise SystemExit("No market gaps in the CSV -- loosen thresholds in market_gaps.py.")
+    if len(gaps) < top:
+        raise SystemExit(f"Only {len(gaps)} market gap(s) available -- need at least {top} for a carousel.")
+
+    slides = [build_value(top, accent, background, seed)]
+    sel = gaps.head(top)
+    for _, r in sel.iterrows():
+        pair = f"{r['value_player']}, {r['vs_player']}"
+        slides.append(build_compare(
+            df, pair, accent, background, style="scoreboard", seed=seed,
+            kicker="VALUE PICK · WHY WE LIKE IT MORE",
+            badge_override="BETTER SITUATION",
+            metrics_mode="value_upside",
+        ))
+    return slides
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--type",
                         choices=["position", "overall", "favorites", "compare", "movers", "value",
-                                 "hypothetical"],
+                                 "value_carousel", "hypothetical"],
                         default="position")
     parser.add_argument("--position", default="WR", help="Position for --type position")
     parser.add_argument("--top", type=int, default=10)
@@ -519,6 +757,10 @@ def main():
                         help="First rank to show (e.g. --start 13 --top 12 => ranks 13-24)")
     parser.add_argument("--players", default="",
                         help='For --type compare: "Derrick Henry, Josh Jacobs"')
+    parser.add_argument("--compare-style", dest="compare_style", default="scoreboard",
+                        choices=["scoreboard", "arena"],
+                        help="For --type compare: 'scoreboard' (default) is the light broadcast-style "
+                             "card; 'arena' is the older dark team-split head-to-head.")
     parser.add_argument("--direction", choices=["risers", "fallers"], default="fallers",
                         help="For --type movers")
     parser.add_argument("--mover", default="", help='For --type hypothetical: player to move, e.g. "Josh Allen"')
@@ -538,13 +780,26 @@ def main():
     variant = resolve_variant(args.variant or None, args.seed)
     accent, background = theme["accent"], theme["background"]
 
+    if args.type == "value_carousel":
+        # Multiple images, not one -- render + print each slide's own WROTE
+        # line (orchestrator.py's generate_carousel_graphics() parses all of
+        # them) instead of falling through to the single-image tail below.
+        df = pd.read_csv(RANKINGS_CSV)
+        slides = build_value_carousel(df, args.top, accent, background, args.seed)
+        n = len(slides)
+        for i, (slide_html, slide_out_path) in enumerate(slides, start=1):
+            final = html_to_png(slide_html, slide_out_path)
+            print(f"Wrote {final}  [slide={i}/{n} theme={theme['name']} variant={variant} layout=carousel]")
+        return
+
     if args.type == "value":
-        html, out_path = build_value(args.top)
+        html, out_path = build_value(args.top, accent, background, args.seed)
     elif args.type == "movers":
         html, out_path = build_movers(args.direction, args.top)
     elif args.type == "compare":
         df = pd.read_csv(RANKINGS_CSV)
-        html, out_path = build_compare(df, args.players, accent, background)
+        html, out_path = build_compare(df, args.players, accent, background,
+                                       style=args.compare_style, seed=args.seed)
     elif args.type == "hypothetical":
         if not args.mover:
             raise SystemExit('--type hypothetical needs --mover, e.g. --mover "Josh Allen" --to 17')

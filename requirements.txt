@@ -27,6 +27,9 @@ passlib[bcrypt]==1.7.4
 # Environment and configuration
 python-dotenv==1.0.0
 
+# LLM (caption generation + content brain)
+anthropic==0.40.0
+
 # Testing
 pytest==7.4.3
 httpx==0.25.2
@@ -36,4 +39,10 @@ plotly==5.17.0
 
 # Web scraping (for additional data sources)
 beautifulsoup4==4.12.2
-selenium==4.15.2 
+selenium==4.15.2
+
+# Headshot cleanup (viz/headshot_cache.py) -- re-mattes chroma-keyed player
+# headshots to remove the green-screen/hair-fringe halo before they're used
+# in graphics. First import downloads a ~180MB segmentation model.
+rembg==2.0.59
+onnxruntime==1.16.3 

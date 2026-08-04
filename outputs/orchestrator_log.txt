@@ -1,0 +1,111 @@
+2026-07-31 14:25:02,605 [ERROR] FAILURE in run_once: No module named 'anthropic'
+2026-07-31 14:26:28,909 [INFO] === Orchestrator run starting (auto=False dry_run=True queue=False) ===
+2026-07-31 14:26:28,909 [INFO] Rankings are 18.8h old (>= 12h threshold) -- refreshing.
+2026-07-31 14:26:36,600 [INFO] Rankings refreshed.
+2026-07-31 14:26:44,068 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 14:26:44,104 [INFO] Brain decision: {"chosen_slot": "value", "subjects": ["David Montgomery", "De'Von Achane", "Matthew Stafford", "Jayden Daniels", "Courtland Sutton", "Garrett Wilson", "Jadarian Price", "Jeremiyah Love"], "params": {"top": 5, "gaps": [{"value_player": "Jadarian Price", "position": "RB", "vs_player": "Jeremiyah Love", "win_gap": 6.0, "adp_gap": 40.8}, {"value_player": "David Montgomery", "position": "RB", "vs_player": "De'Von Achane", "win_gap": 5.0, "adp_gap": 44.8}, {"value_player": "Matthew Stafford", "position": "QB", "vs_player": "Jayden Daniels", "win_gap": 4.0, "adp_gap": 48.7}, {"value_player": "Courtland Sutton", "position": "WR", "vs_player": "Garrett Wilson", "win_gap": 4.0, "adp_gap": 47.8}, {"value_player": "Blake Corum", "position": "RB", "vs_player": "Bucky Irving", "win_gap": 3.0, "adp_gap": 51.2}]}, "reasoning": "With no recent post history to conflict with, the value gaps post offers the most immediately actionable and eye-catching content \u2014 ADP discrepancies of 40-50+ spots paired with win-rate advantages are the kind of draft-day alpha that drives high engagement and saves. The Montgomery vs. Achane and Stafford vs. Daniels gaps in particular are attention-grabbing contrarian takes.", "priority": "normal"}
+2026-07-31 14:26:44,105 [INFO] Running: C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\Scripts\python.exe C:\Users\austi\Documents\blitzculture\ff-agent-policy\scripts\generate_ranking_graphic.py --type value --top 5
+2026-07-31 14:26:47,869 [INFO] Graphic ready: C:\Users\austi\Documents\blitzculture\ff-agent-policy\outputs\graphics\value_targets_top5_20260731T142644.png
+2026-07-31 14:26:56,373 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 14:26:56,374 [INFO] Caption ready (1317 chars).
+2026-07-31 14:26:56,375 [INFO] --dry-run set -- skipping queue/git push/Instagram publish.
+2026-07-31 16:11:48,277 [INFO] === Orchestrator run starting (auto=False dry_run=False queue=True) ===
+2026-07-31 16:11:48,277 [INFO] Rankings are 1.8h old (< 12h threshold) -- skipping refresh.
+2026-07-31 16:11:53,168 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 16:11:53,204 [INFO] Brain decision: {"chosen_slot": "value", "subjects": ["David Montgomery", "De'Von Achane"], "params": {"value_player": "David Montgomery", "position": "RB", "vs_player": "De'Von Achane", "win_gap": 5.0, "adp_gap": 44.8, "top": 5}, "reasoning": "The value slot surfaces the most actionable, engagement-friendly content right now \u2014 concrete ADP inefficiencies give followers something to act on. Montgomery vs. Achane is a compelling lead story: a 5-win gap with nearly 45 ADP spots of separation is a dramatic, easy-to-grasp steal that fantasy managers will immediately want to discuss.", "priority": "normal"}
+2026-07-31 16:11:53,204 [INFO] Running: C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\Scripts\python.exe C:\Users\austi\Documents\blitzculture\ff-agent-policy\scripts\generate_ranking_graphic.py --type value --top 5
+2026-07-31 16:11:57,526 [INFO] Graphic ready: C:\Users\austi\Documents\blitzculture\ff-agent-policy\outputs\graphics\value_targets_top5_20260731T161153.png
+2026-07-31 16:12:07,956 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 16:12:07,958 [INFO] Caption ready (1555 chars).
+2026-07-31 16:12:07,959 [INFO] Queued for review as 20260731T211207-value (outputs/pending_posts.json).
+2026-07-31 16:30:40,818 [INFO] === Orchestrator run starting (auto=False dry_run=False queue=True) ===
+2026-07-31 16:30:40,819 [INFO] Rankings are 2.1h old (< 12h threshold) -- skipping refresh.
+2026-07-31 16:30:45,589 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 16:30:45,626 [INFO] Brain decision: {"chosen_slot": "value", "subjects": ["David Montgomery", "De'Von Achane"], "params": {"value_player": "David Montgomery", "position": "RB", "vs_player": "De'Von Achane", "win_gap": 5.0, "adp_gap": 44.8, "top": 5}, "reasoning": "The value slot offers the most compelling content right now \u2014 David Montgomery producing 5 more wins than De'Von Achane while being drafted nearly 45 spots later is a striking, actionable insight that fantasy managers will immediately care about. The evergreen ranking posts (overall, position, favorites) are less differentiated given recent history already featured a player comparison.", "priority": "normal"}
+2026-07-31 16:30:45,626 [INFO] Running: C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\Scripts\python.exe C:\Users\austi\Documents\blitzculture\ff-agent-policy\scripts\generate_ranking_graphic.py --type value --top 5
+2026-07-31 16:30:48,890 [INFO] Graphic ready: C:\Users\austi\Documents\blitzculture\ff-agent-policy\outputs\graphics\value_targets_top5_20260731T163046.png
+2026-07-31 16:30:58,681 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 16:30:58,683 [INFO] Caption ready (1536 chars).
+2026-07-31 16:30:58,685 [INFO] Queued for review as 20260731T213058-value (outputs/pending_posts.json).
+2026-07-31 16:53:49,757 [INFO] Carousel images hosted (2 slides): ['https://example.com/outputs/graphics/slide1.png', 'https://example.com/outputs/graphics/slide2.png']
+2026-07-31 16:53:49,759 [INFO] Published carousel to Instagram. Media ID: media-parent-container-id
+2026-07-31 16:53:49,767 [INFO] Post logged to outputs/post_history.json.
+2026-07-31 16:54:56,878 [INFO] === Orchestrator run starting (auto=False dry_run=True queue=False) ===
+2026-07-31 16:54:56,878 [INFO] Rankings are 2.5h old (< 12h threshold) -- skipping refresh.
+2026-07-31 16:55:01,882 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 16:55:01,923 [INFO] Brain decision: {"chosen_slot": "value_carousel", "subjects": ["Jadarian Price", "David Montgomery", "Matthew Stafford", "Courtland Sutton", "Jared Goff"], "params": {"top": 5}, "reasoning": "The value_carousel is the richer multi-slide format over the plain value slot and delivers five compelling market-inefficiency steals \u2014 highlighted by Price over Love (6-win gap, 41 ADP rounds cheaper) and Montgomery over Achane (5-win gap, 45 rounds cheaper) \u2014 which makes for a highly engaging, data-driven post. Recent history only shows a head-to-head compare, so a carousel pivot adds clear variety.", "priority": "normal"}
+2026-07-31 16:55:01,923 [INFO] Running: C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\Scripts\python.exe C:\Users\austi\Documents\blitzculture\ff-agent-policy\scripts\generate_ranking_graphic.py --type value_carousel --top 5
+2026-07-31 16:55:21,172 [INFO] Carousel ready (6 slides): ['C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\value_targets_top5_20260731T165502.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jadarianprice_jeremiyahlove_20260731T165502.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_davidmontgomery_devonachane_20260731T165502.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_matthewstafford_jaydendaniels_20260731T165502.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_courtlandsutton_garrettwilson_20260731T165502.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jaredgoff_jaydendaniels_20260731T165502.png']
+2026-07-31 16:55:29,304 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 16:55:29,306 [INFO] Caption ready (1284 chars).
+2026-07-31 16:55:29,306 [INFO] --dry-run set -- skipping queue/git push/Instagram publish.
+2026-07-31 16:55:29,306 [INFO] Caption + decision saved to C:\Users\austi\Documents\blitzculture\ff-agent-policy\outputs\dry_run_last.json
+2026-07-31 18:28:32,845 [INFO] === Orchestrator run starting (auto=False dry_run=False queue=True) ===
+2026-07-31 18:28:32,846 [INFO] Rankings are 4.0h old (< 12h threshold) -- skipping refresh.
+2026-07-31 18:28:36,755 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 18:28:36,790 [INFO] Brain decision: {"chosen_slot": "value_carousel", "subjects": ["Jadarian Price", "David Montgomery", "Matthew Stafford", "Courtland Sutton", "Jared Goff"], "params": {"top": 5}, "reasoning": "The value_carousel is the richer multi-slide format over the plain value slot and delivers five compelling ADP-gap steals in one engaging post; with the recent history being a head-to-head compare, a carousel showcasing market inefficiencies offers clear variety and strong engagement potential.", "priority": "normal"}
+2026-07-31 18:28:36,790 [INFO] Running: C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\Scripts\python.exe C:\Users\austi\Documents\blitzculture\ff-agent-policy\scripts\generate_ranking_graphic.py --type value_carousel --top 5
+2026-07-31 18:28:55,620 [INFO] Carousel ready (6 slides): ['C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\value_targets_top5_20260731T182837.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jadarianprice_jeremiyahlove_20260731T182837.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_davidmontgomery_devonachane_20260731T182837.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_matthewstafford_jaydendaniels_20260731T182837.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_courtlandsutton_garrettwilson_20260731T182837.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jaredgoff_jaydendaniels_20260731T182837.png']
+2026-07-31 18:29:04,674 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 18:29:04,675 [INFO] Caption ready (1427 chars).
+2026-07-31 18:29:04,677 [INFO] Queued for review as 20260731T232904-value_carousel (outputs/pending_posts.json).
+2026-07-31 20:37:37,095 [INFO] === Orchestrator run starting (auto=False dry_run=False queue=True) ===
+2026-07-31 20:37:37,096 [INFO] Rankings are 6.2h old (< 12h threshold) -- skipping refresh.
+2026-07-31 20:37:42,535 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 20:37:42,576 [INFO] Brain decision: {"chosen_slot": "value_carousel", "subjects": ["Jadarian Price", "David Montgomery", "Matthew Stafford", "Courtland Sutton", "Jared Goff"], "params": {"top": 5}, "reasoning": "The value_carousel is the richest format for the market-inefficiency data and offers 5 compelling steal narratives \u2014 including a 44.8 ADP gap on Montgomery vs. Achane and a 48.7 gap on Stafford vs. Daniels \u2014 making for a highly shareable, multi-slide post. Preferred over plain 'value' per instructions, and the recent history (a player compare) makes a carousel a strong format change.", "priority": "normal"}
+2026-07-31 20:37:42,576 [INFO] Running: C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\Scripts\python.exe C:\Users\austi\Documents\blitzculture\ff-agent-policy\scripts\generate_ranking_graphic.py --type value_carousel --top 5
+2026-07-31 20:38:01,984 [INFO] Carousel ready (6 slides): ['C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\value_targets_top5_20260731T203743.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jadarianprice_jeremiyahlove_20260731T203743.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_davidmontgomery_devonachane_20260731T203743.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_matthewstafford_jaydendaniels_20260731T203743.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_courtlandsutton_garrettwilson_20260731T203743.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jaredgoff_jaydendaniels_20260731T203743.png']
+2026-07-31 20:38:10,781 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-07-31 20:38:10,798 [INFO] Caption ready (1378 chars).
+2026-07-31 20:38:11,082 [INFO] Queued for review as 20260801T013810-value_carousel (outputs/pending_posts.json).
+2026-08-03 18:57:30,613 [INFO] === Orchestrator run starting (auto=False dry_run=False queue=True) ===
+2026-08-03 18:57:30,613 [INFO] === Orchestrator run starting (auto=False dry_run=False queue=True) ===
+2026-08-03 18:57:30,614 [INFO] Rankings are 76.5h old (>= 12h threshold) -- refreshing.
+2026-08-03 18:57:30,614 [INFO] Rankings are 76.5h old (>= 12h threshold) -- refreshing.
+2026-08-03 18:57:30,614 [INFO] Rankings are 76.5h old (>= 12h threshold) -- refreshing.
+2026-08-03 20:01:28,451 [INFO] === Orchestrator run starting (auto=False dry_run=False queue=True) ===
+2026-08-03 20:01:28,471 [INFO] Rankings are 77.6h old (>= 12h threshold) -- refreshing.
+2026-08-03 20:01:41,707 [WARNING] refresh_rankings attempt 1/3 failed: player_ranking_v1.py failed: rmat.py", line 1152, in to_csv
+    csv_formatter.save()
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\formats\csvs.py", line 247, in save
+    with get_handle(
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\common.py", line 863, in get_handle
+    handle = open(
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\player_rankings_2026.csv'
+2026-08-03 20:01:46,719 [INFO] Rankings are 77.6h old (>= 12h threshold) -- refreshing.
+2026-08-03 20:01:48,685 [WARNING] refresh_rankings attempt 2/3 failed: player_ranking_v1.py failed: rmat.py", line 1152, in to_csv
+    csv_formatter.save()
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\formats\csvs.py", line 247, in save
+    with get_handle(
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\common.py", line 863, in get_handle
+    handle = open(
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\player_rankings_2026.csv'
+2026-08-03 20:01:58,687 [INFO] Rankings are 77.6h old (>= 12h threshold) -- refreshing.
+2026-08-03 20:02:00,481 [WARNING] refresh_rankings attempt 3/3 failed: player_ranking_v1.py failed: rmat.py", line 1152, in to_csv
+    csv_formatter.save()
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\formats\csvs.py", line 247, in save
+    with get_handle(
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\common.py", line 863, in get_handle
+    handle = open(
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\player_rankings_2026.csv'
+2026-08-03 20:02:00,484 [ERROR] FAILURE in refresh_rankings: player_ranking_v1.py failed: rmat.py", line 1152, in to_csv
+    csv_formatter.save()
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\formats\csvs.py", line 247, in save
+    with get_handle(
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\common.py", line 863, in get_handle
+    handle = open(
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\player_rankings_2026.csv'
+2026-08-03 20:02:00,484 [ERROR] Refresh failed, continuing with existing rankings CSV: player_ranking_v1.py failed: rmat.py", line 1152, in to_csv
+    csv_formatter.save()
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\formats\csvs.py", line 247, in save
+    with get_handle(
+  File "C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\lib\site-packages\pandas\io\common.py", line 863, in get_handle
+    handle = open(
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\player_rankings_2026.csv'
+2026-08-03 20:02:05,043 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-08-03 20:02:05,124 [INFO] Brain decision: {"chosen_slot": "value_carousel", "subjects": ["Jadarian Price", "David Montgomery", "Matthew Stafford", "Courtland Sutton", "Jared Goff"], "params": {"top": 5}, "reasoning": "The value_carousel is the richer multi-slide format over the plain value slot for the same underlying data, and these ADP gaps (40-53 picks of savings) make for compelling 'steal' storytelling that will drive strong engagement. Recent history was a single compare post, so a carousel feels fresh.", "priority": "normal"}
+2026-08-03 20:02:05,125 [INFO] Running: C:\Users\austi\Documents\blitzculture\ff-agent-policy\venv\Scripts\python.exe C:\Users\austi\Documents\blitzculture\ff-agent-policy\scripts\generate_ranking_graphic.py --type value_carousel --top 5
+2026-08-03 20:02:33,701 [INFO] Carousel ready (6 slides): ['C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\value_targets_top5_20260803T200205.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jadarianprice_jeremiyahlove_20260803T200205.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_davidmontgomery_devonachane_20260803T200205.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_matthewstafford_jaydendaniels_20260803T200205.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_courtlandsutton_garrettwilson_20260803T200205.png', 'C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\compare_jaredgoff_jaydendaniels_20260803T200205.png']
+2026-08-03 20:02:42,802 [INFO] HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-08-03 20:02:42,837 [INFO] Caption ready (1373 chars).
+2026-08-03 20:02:42,870 [INFO] Queued for review as 20260804T010242-value_carousel (outputs/pending_posts.json).

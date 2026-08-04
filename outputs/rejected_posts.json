@@ -1,0 +1,62 @@
+[
+  {
+    "id": "20260731T211207-value",
+    "queued_at": "2026-07-31T21:12:07Z",
+    "decision": {
+      "chosen_slot": "value",
+      "subjects": [
+        "David Montgomery",
+        "De'Von Achane"
+      ],
+      "params": {
+        "value_player": "David Montgomery",
+        "position": "RB",
+        "vs_player": "De'Von Achane",
+        "win_gap": 5.0,
+        "adp_gap": 44.8,
+        "top": 5
+      },
+      "reasoning": "The value slot surfaces the most actionable, engagement-friendly content right now \u2014 concrete ADP inefficiencies give followers something to act on. Montgomery vs. Achane is a compelling lead story: a 5-win gap with nearly 45 ADP spots of separation is a dramatic, easy-to-grasp steal that fantasy managers will immediately want to discuss.",
+      "priority": "normal"
+    },
+    "graphic": {
+      "image_path": "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\value_targets_top5_20260731T161153.png",
+      "theme": "royal_blue",
+      "variant": "classic",
+      "layout": "list"
+    },
+    "caption": "The ADP market is sleeping on some real production. These five players are being drafted 41 to 54 spots later than comparable options while projecting within a few wins of them, sometimes matching them almost point for point.\n\nStart with the QBs, because the Stafford and Goff comps are almost absurd. Stafford projects at 281.6 half-PPR points, Goff at 280.3. Jayden Daniels projects 281.5. The difference in projected output is essentially zero, yet Stafford is going 49 picks later and Goff 54 picks later. That is a starting-caliber QB at a late-round price. At the skill positions, David Montgomery (162.1 projected) is being drafted 45 spots after De'Von Achane (169.6), and Courtland Sutton (148.0) is going nearly 48 picks after Garrett Wilson (162.6) for a similar production window. Jadarian Price rounds it out with a 40.8 ADP gap on Jeremiyah Love despite projecting within 6 wins.\n\nFor draft strategy, this is where your roster construction gets interesting. If you lock in a starter-tier QB 50 picks cheaper than the market rate, that pick equity goes right back into securing depth or a high-upside flex. Same logic applies at RB and WR. You are not reaching for upside here, you are paying late-round prices for mid-round projections.\n\nWhich of these five surprises you most? Drop your take below, or check the full value rankings at the link in bio.\n\n#FantasyFootball #NFL #FantasyFootballAdvice #FFB #DynastyFootball #RedraftFantasy #FantasyFootball2026 #JadarianPrice #DavidMontgomery #MatthewStafford #NFLDraft #FantasyFootballRankings",
+    "rejected_at": "2026-07-31T21:16:44Z",
+    "reason": "revising the format of the values post, will re run later"
+  },
+  {
+    "id": "20260731T213058-value",
+    "queued_at": "2026-07-31T21:30:58Z",
+    "decision": {
+      "chosen_slot": "value",
+      "subjects": [
+        "David Montgomery",
+        "De'Von Achane"
+      ],
+      "params": {
+        "value_player": "David Montgomery",
+        "position": "RB",
+        "vs_player": "De'Von Achane",
+        "win_gap": 5.0,
+        "adp_gap": 44.8,
+        "top": 5
+      },
+      "reasoning": "The value slot offers the most compelling content right now \u2014 David Montgomery producing 5 more wins than De'Von Achane while being drafted nearly 45 spots later is a striking, actionable insight that fantasy managers will immediately care about. The evergreen ranking posts (overall, position, favorites) are less differentiated given recent history already featured a player comparison.",
+      "priority": "normal"
+    },
+    "graphic": {
+      "image_path": "C:\\Users\\austi\\Documents\\blitzculture\\ff-agent-policy\\outputs\\graphics\\value_targets_top5_20260731T163046.png",
+      "theme": "violet",
+      "variant": "spotlight",
+      "layout": "list"
+    },
+    "caption": "The ADP market is sleeping on some names that our model is not.\n\nThese five players are all being drafted significantly later than comparable options at their position, yet the projected point totals are nearly identical. Jadarian Price (147.1 proj) is going 40.8 picks after Jeremiyah Love (159.6 proj) despite a gap of only 6 projected points. David Montgomery (162.1) is sitting 44.8 picks behind De'Von Achane (169.6) for a difference of just 5 points on the season. The wildest one might be Stafford vs. Jayden Daniels: 281.6 projected points to 281.5, and Stafford is coming off the board nearly 49 picks later. Goff shows a similar story against Daniels, going 53.5 picks later for a projected output that is essentially a rounding error apart.\n\nFor your draft, this is free equity. If you load up on the consensus favorites early, you pay a steep price in positional depth. But if you let the room take Achane and Daniels in their expected ranges, you can pivot to Montgomery and Stafford at a massive discount and redirect those saved picks into your WR room or flex spots. Sutton (148.0 proj) going 47.8 picks after Garrett Wilson (162.6) is the kind of late-round receiver value that actually wins leagues.\n\nWhich of these five do you feel most comfortable targeting? Drop your answer below, or hit the link in bio for the full value rankings.\n\n#FantasyFootball #NFL #FantasyFootballAdvice #FFB #DynastyFootball #RedraftFantasy #FantasyFootball2026 #JadarianPrice #DavidMontgomery #MatthewStafford #StartSitAdvice #WaiverWire",
+    "rejected_at": "2026-08-01T03:13:25Z",
+    "reason": "the background was too hard to read"
+  }
+]

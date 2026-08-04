@@ -51,6 +51,47 @@ def create_media_container(image_url: str, caption: str) -> str:
     return container_id
 
 
+def create_carousel_item(image_url: str) -> str:
+    """One carousel slide's container: same /media endpoint as a single
+    image post, but flagged is_carousel_item=true and with NO caption --
+    Instagram only accepts one caption for the whole carousel, set on the
+    parent container in create_carousel_container()."""
+    url = f"{BASE_URL}/{IG_USER_ID}/media"
+    payload = {
+        "image_url": image_url,
+        "is_carousel_item": "true",
+        "access_token": ACCESS_TOKEN,
+    }
+    resp = requests.post(url, data=payload, timeout=30)
+    if not resp.ok:
+        print("Instagram API error response (carousel item):", resp.json())
+    resp.raise_for_status()
+    container_id = resp.json()["id"]
+    print(f"Created carousel item container: {container_id}")
+    return container_id
+
+
+def create_carousel_container(children_ids: list, caption: str) -> str:
+    """The parent container tying together every carousel-item container
+    (in swipe order) with media_type=CAROUSEL, plus the one caption for the
+    whole post. Publish this container's ID with publish_container(), same
+    as a single-image post."""
+    url = f"{BASE_URL}/{IG_USER_ID}/media"
+    payload = {
+        "media_type": "CAROUSEL",
+        "children": ",".join(children_ids),
+        "caption": caption,
+        "access_token": ACCESS_TOKEN,
+    }
+    resp = requests.post(url, data=payload, timeout=30)
+    if not resp.ok:
+        print("Instagram API error response (carousel container):", resp.json())
+    resp.raise_for_status()
+    container_id = resp.json()["id"]
+    print(f"Created carousel parent container: {container_id}")
+    return container_id
+
+
 def publish_container(container_id: str) -> dict:
     """Step 2: actually publish the prepared container to the feed."""
     url = f"{BASE_URL}/{IG_USER_ID}/media_publish"
